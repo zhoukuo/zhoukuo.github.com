@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Go 语言初步 › Geek&#39;s way</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="这几天认真玩起了 Go。所谓认真玩，就是拿 Go 写点程序，前后大约两千行吧。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Go 语言初步">
+  <meta property="og:site_name" content="Geek&#39;s way">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Geek&#39;s way" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">Geek&#39;s way</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">Go 语言初步</h1>
+  
+
+      
+        <time datetime="2016-08-05T03:20:39.000Z">2016-08-05</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>这几天认真玩起了 Go。所谓认真玩，就是拿 Go 写点程序，前后大约两千行吧。</p>
+<a id="more"></a>
+
+<p>据说 Go 的最佳开发平台是 Mac OS ，我没有。其次应该是 Linux 。Windows 版还没全部搞定，但是也可以用了。如果你用 google 搜索，很容易去到一个叫 go-windows 的开源项目上。千万别上当，这是个废弃的项目。如果你用这个，很多库都没有，而且语法也是老的。我在 Windows 下甚至不能正确链接自己写的多个 package 。活跃的 Windows 版是 gomingw ，对于 Windows 用户，装一个 mingw32 以后就可以开始玩了。<br>就三天来实战经历，我喜欢上这门新语言有如下原因：</p>
+<h2 id="mix-in-的接口风格"><a href="#mix-in-的接口风格" class="headerlink" title="mix-in 的接口风格"></a>mix-in 的接口风格</h2><p>非常接近于我在用 C 时惯用的面向对象风格。有语法上的支持要舒服多了。以平坦的方式编写函数，没有层次。而后用 interface 把需要的功能聚合在一起。没有继承层次，只有组合功能。</p>
+<h2 id="强类型系统"><a href="#强类型系统" class="headerlink" title="强类型系统"></a>强类型系统</h2><p>使得犯错误的机会大大降低。正确通过编译，几乎就没有什么 bug 了。而编写程序又有点使用 lua 这种动态语言的感觉，总之，写起来很舒服。</p>
+<h2 id="内置的-string-slice-类型，以及-gc"><a href="#内置的-string-slice-类型，以及-gc" class="headerlink" title="内置的 string / slice 类型，以及 gc"></a>内置的 string / slice 类型，以及 gc</h2><p>这是我觉得现代编程必须的东西。手工管理未必有更高的效率，但一定有更多的出错机会。至少，我一直主张有一个方便的 string 不变量的基本类型的（参见这一篇）。</p>
+<h2 id="defer"><a href="#defer" class="headerlink" title="defer"></a>defer</h2><p>defer 是个有趣使用的东西，用它来实现 RAII 比 C++ 利用栈上对象的析构函数的 trick 方案让人塌实多了。go 在语言设计上是很吝啬新的关键字的。但多出一个关键字 defer ，并用内建函数 panic / recover 来解决许多看似应该用 exception 解决的问题要漂亮的多。</p>
+<h2 id="zero-初始化"><a href="#zero-初始化" class="headerlink" title="zero 初始化"></a>zero 初始化</h2><p>我一直觉得 C++ 的构造函数特别多余。按我用 C 的惯例，一切数据结构都应该用 0 初始化。所以 C 里有 calloc 这个函数。go 把这点贯彻了。不会再有未定义的数据。</p>
+<h2 id="包系统特别的好"><a href="#包系统特别的好" class="headerlink" title="包系统特别的好"></a>包系统特别的好</h2><p>而且严格定义了包的初始化过程，即 init 函数。在我自己的 C 语言构建的项目中，实现了几乎一样的机制，甚至也叫 init 。但是有语言层面的支持就是好。对，只有 init 没有 exit 。正合我意。</p>
+<h2 id="goroutine-是个相当有用的设计"><a href="#goroutine-是个相当有用的设计" class="headerlink" title="goroutine 是个相当有用的设计"></a>goroutine 是个相当有用的设计</h2><p>8 年前，我给 C 实现了 coroutine 库，并用在项目里，并坚信，程序就应该这么写。但是没有语言级的支持，用起来还是很麻烦。goroutine 不仅简化了许多业务逻辑的编写，而且天生就是为并发编程而生的。select/chan 可能是唯一正确的并发编程的模型。Erlang 还是太小众了，而 Go 可以延用 Erlang 的模型，却有着纯正的 C 语言血统，我想会被更多人接受的。虽然 Go 依然可以用共享状态加锁的方案，但不推荐使用。chan 用习惯了，还是相当方便的。</p>
+<h2 id="要不要独立占一行的信仰之争终于结束了"><a href="#要不要独立占一行的信仰之争终于结束了" class="headerlink" title="{ 要不要独立占一行的信仰之争终于结束了"></a>{ 要不要独立占一行的信仰之争终于结束了</h2><p>还记得前段时间有位同学来 email 指责我开源的代码没有章法。程序写的太乱。他的理由就是，我的 { 都没有独占一行。好了，争论可以结束了。在 Go 里，如果你把 { 从 if/for 语言的行末去掉，放在下一行。编译器是不会让你通过的。（除非你再加一个 ; ）我很欣慰 ;)</p>
+<p>我发现我花了四年时间锤炼自己用 C 语言构建系统的能力，试图找到一个规范，可以更好的编写软件。结果发现只是对 Go 的模仿。缺乏语言层面的支持，只能是一个拙劣的模仿。</p>
+<p>对于有 C 基础的同学，比如我，学习 Go 毫不费力。按这篇文章的指引即可。Rob Pike 的三日教程 PPT ，我心急，用了一个下午就看完了，并且做完了练习。</p>
+<p>不过实战编写程序还是需要反复查阅文档的。学习一门新语言，就是在学习它的各种惯用法和库。而不是去模拟熟悉的语言。我在编写代码的时候，时刻问自己，在 Go 里，通常用什么手法来处理这个问题。接下来就是不断的查询文档了。从这个意义上讲，学习新东西还是很累的。好在 Go 的各种设计都非常切合我的本意，所以自然是越写越舒服了。</p>
+<p>至于把变量类型申明都放在后面，按 Sean 同学的话说，有种真气逆行的感觉。对我来说倒是小问题，几个小时就习惯了。反而 C 语言那种亦前亦后的方式才是奇怪呢。</p>
+<h2 id="说一下我的练手项目"><a href="#说一下我的练手项目" class="headerlink" title="说一下我的练手项目"></a>说一下我的练手项目</h2><p>我用 Go 重新实现了处理多连接的服务器。当然，现在的设计方案和几年前写 blog 时的方案有略微的不同。</p>
+<p>需求是这样的：</p>
+<p>这个服务会监停一个端口，允许外部多个连接的接入，并可以把这个连接上的数据包汇总发到后端的一个连接上。简单的说，就是一个 N 对 1 的数据处理器。把 N 个 TCP 数据流合成一个数据流。</p>
+<p>一个服务的处理上限是 64K 的连接，使用 2 字节的 id 号区分不同的外部连接。我定义了简单的协议，每个数据片段有 3 字节的数据头。分别是数据长度一字节和 2 字节的连接 id 号。</p>
+<p>这个服务仅仅做数据流的合并，而不规定数据逻辑上的分包。对内的数据管道上看起来的数据流就是这样的：</p>
+<p>len id_lo id_hi content … len id_lo id_hi content …  len id_lo id_hi content …<br>处理合并起来的数据流非常简单，只需要通过一个 IO 管道 （可以是 socket 也可以的 stdio/stdout ，对于 Go　来说，甚至可以是一个 in-memory Pipe ）这方便后端的程序不再考虑多连接的问题。</p>
+<p>后端服务需要可以控制连接服务器。最基本的功能就是可以强制断开某个外部连接。并且可以获得新的外部连接接入或离开的信号。</p>
+<p>更进一步，应该由后端服务器来控制连接服务器对外监听端口的开启与关闭，以及外部连接的上限等。</p>
+<p>为了简化设计，我选择在一个特殊的内部连接（0号连接）上收发内部的控制指令。并且使用 \r\n 分割的文本协议。</p>
+<h2 id="用-Go-来实现这个服务非常简洁"><a href="#用-Go-来实现这个服务非常简洁" class="headerlink" title="用 Go 来实现这个服务非常简洁"></a>用 Go 来实现这个服务非常简洁</h2><p>全部我只使用了 240 行左右的 Go 代码。所有的网络连接都使用独立的 goroutine 来控制。每个都以阻塞方式处理 socket 。主循环仅仅使用一个 select ，这类似 Erlang 的事件驱动模型。</p>
+<p>对于控制指令流，创建一个 in-memory Pipe 即可。在对内的数据流上，过滤到 id 为 0 的数据包，转发到这个 Pipe 上。使用 bufio 把 Pipe 转换成一个 bufio.Reader 接口，就可以方便的使用 ReadString 方法去读以回车分割的文本行，进而排发到解析指令的 goroutine 中，把结构化指令利用 chan　发进消息 select 循环。整个只需要不到 10 行代码。</p>
+<p>大多数 goroutine 内部都是一个 for 循环，结束条件是和它通讯的 chan 被外部关闭。</p>
+<p>需要稍微考虑性能的地方是给外部连接的数据包加上三字节的头转发到内部通道上。这里如果每个包都用 make 创建一个新的 array slice 会有一些内部管理上的开销。我的做法是每次申请 16k 的 array ，再创建一个 slice 去组包，如果这个 16k 的 array 没用完，就会顺着用下去。如 Go 的教程中所言，slice 的创建是很廉价的，想来也是如此。它只是对 array 的部分引用。</p>
+<p>Go 的引用和值分得很清楚，这使它更像 C 而不是 Java ，却又提供了 C++ 提供不了的安全性。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>用 Go 写网络程序，真是非常舒心。socket 和 file 在 interface 上的统一，暗合 Unix 之道。程序嘛，就是处理输入，产生输出。Reader 和 Writer 接口让人愉快。<br>&lt;完&gt;</p>
+<p>原文地址：<a href="http://blog.codingnow.com/2010/11/go_prime.html" target="_blank" rel="noopener">http://blog.codingnow.com/2010/11/go_prime.html</a></p>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/golang/">golang</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/07/28/ELK-集中式日志解决方案/">ELK-集中式日志解决方案</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/30/[转]Unix之父、C语言的发明人：Dennis M. Ritchie、Ken Thompson/">转：Unix之父、C语言的发明人：Dennis M. Ritchie、Ken Thompson</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/30/[转]每一个程序员需要了解的10个Linux命令/">转：每一个程序员需要了解的10个Linux命令</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/22/Docker-入门/">Docker 入门</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/16/[转]Linus，只是为了好玩/">转：Linus，只是为了好玩儿</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>8</small></li>
+  
+    <li><a href="/tags/docker/">docker</a><small>1</small></li>
+  
+    <li><a href="/tags/git/">git</a><small>2</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/hexo/">hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/markdown/">markdown</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>2</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>1</small></li>
+  
+    <li><a href="/tags/设计/">设计</a><small>6</small></li>
+  
+    <li><a href="/tags/调试/">调试</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 18px;">c</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 12px;">git</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/linux/" style="font-size: 18px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/文化/" style="font-size: 16px;">文化</a> <a href="/tags/测试/" style="font-size: 12px;">测试</a> <a href="/tags/监控/" style="font-size: 10px;">监控</a> <a href="/tags/设计/" style="font-size: 14px;">设计</a> <a href="/tags/调试/" style="font-size: 12px;">调试</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+          <li>
+            
+            	<a href="https://trello.com/" target="_blank" title="Trello">Trello</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.scrumcn.com/" target="_blank" title="Scrum中文网">Scrum中文网</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.processon.com/" target="_blank" title="ProcessOn">ProcessOn</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.golangtc.com/download" target="_blank" title="Go下载">Go下载</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://godoc.ml/" target="_blank" title="Go手册">Go手册</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/" target="_blank" title="Go圣经">Go圣经</a>
+            
+          </li>
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+

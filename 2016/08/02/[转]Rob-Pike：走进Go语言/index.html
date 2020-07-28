@@ -1,0 +1,288 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>转：Rob Pike：走进Go语言 › Geek&#39;s way</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="本文整理自Google首席工程师Rob Pike的演讲，主要讲述的了Go的部分设计原理和初衷，也有提到Go语言在Google内外的应用现状。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="转：Rob Pike：走进Go语言">
+  <meta property="og:site_name" content="Geek&#39;s way">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Geek&#39;s way" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">Geek&#39;s way</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">转：Rob Pike：走进Go语言</h1>
+  
+
+      
+        <time datetime="2016-08-02T14:32:48.000Z">2016-08-02</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>本文整理自Google首席工程师Rob Pike的演讲，主要讲述的了Go的部分设计原理和初衷，也有提到Go语言在Google内外的应用现状。<a id="more"></a>但本文的目的更多的是关于软件工程而不是编程语言的设计，更准确地说是如何设计编程语言来帮助软件工程。</p>
+<p><img src="http://static.oschina.net/uploads/img/201410/15150257_6HPb.jpg"></p>
+<h2 id="序言：关于Go"><a href="#序言：关于Go" class="headerlink" title="序言：关于Go"></a>序言：关于Go</h2><p>Go语言是一个开源、并发、高效、简单、有趣（但对某些人来说可能很无聊）的编程语言，支持垃圾回收（GC），具有很好的可伸缩性。Go是从2007年末由Robert Griesemer, Rob Pike, Ken Thompson主持开发，后来还加入了Ian Lance Taylor, Russ Cox等人，并最终于2009年11月开源，在2012年早些时候发布了Go 1稳定版本。现在Go的开发已经是完全开放的，并且拥有一个活跃的社区。</p>
+<p>Go最初是为了解决Google的问题而开发的，要知道Google面临着很多大问题。Google的中服务器最主要是C++编写的，除此之外还有很多Java、Python代码。另外，Google还有数千名工程师、无数行代码、庞大的分布式构建系统以及数不清的机器（我们认为相对于一个中等规模的集群）。Google的开发可能很慢，甚至笨拙，但它总是很有效。</p>
+<p>所以毫无疑问Go对“大硬件”的支持非常好，也适合“大软件”的开发。CSDN之前也编译了一批Rob Pike的文章——<a href="http://www.csdn.net/article/2012-07-05/2807113-less-is-exponentially-more" target="_blank" rel="noopener">Go语言之父谈Go：大道至简</a>，在这里Rob描述了Go的创作起源和初衷。</p>
+<p><img src="http://static.oschina.net/uploads/img/201410/15150257_Gt68.jpg"></p>
+<h2 id="为什么应该用Go？"><a href="#为什么应该用Go？" class="headerlink" title="为什么应该用Go？"></a>为什么应该用Go？</h2><p>Go是为了帮助人们阅读、调试和维护大型软件系统而生的，所以目标是：</p>
+<ul>
+<li>不再缓慢</li>
+<li>不再笨拙</li>
+<li>提高效率</li>
+<li>保持（甚至提升）扩展性</li>
+</ul>
+<p>但是在使用C++或者Java开发中却常常遇到各种问题：</p>
+<ul>
+<li>构建缓慢</li>
+<li>依赖性难以控制</li>
+<li>每个编程语言都使用不同的语言子集</li>
+<li>程序难以理解（文档等原因）</li>
+<li>重复工作</li>
+<li>更新成本高</li>
+<li>版本交叉</li>
+<li>自动化不方便（工具问题）</li>
+<li>跨语言构建</li>
+</ul>
+<p>而Go语言则是为了解决这些问题而设计的。</p>
+<p>另外，C语言的依赖一直是个大问题，包括依赖叠加、编译时引入依赖的情况都很难处理，同时你也没办法查清哪些依赖是可以删除的，那些不可以。在C++中，这一点变得更加明显：</p>
+<ul>
+<li>每个类里都有#include文件</li>
+<li>#include文件中有代码（而不仅仅是声明）</li>
+<li>#ifndef的残留</li>
+</ul>
+<p>所以一直无法在一台机器上构建大型Google二进制。（To build a large Google binary on a single computer is impractical.）</p>
+<p>当然，工具确实很有帮助，于是做了如下改进：</p>
+<ul>
+<li>新的分布式构建系统</li>
+<li>不再需要Makefile（但仍然使用BUILD文件）</li>
+<li>多缓存</li>
+<li>多复杂度（大程序本身所具有的）</li>
+</ul>
+<p>即使在Google的分布式构建系统的的帮助下，大型构建工程依然会花费不少时间（以其中一个二进制文件为例，在2007年花了45分钟，现在是27分钟）。生活质量还是太低。</p>
+<h2 id="走进Go语言"><a href="#走进Go语言" class="headerlink" title="走进Go语言"></a>走进Go语言</h2><p>我们都希望拥有更高质量的生活，所以必须解决这些问题，所以就有了最初的想法：</p>
+<ul>
+<li>必须是可扩展的</li>
+<li>适合大型程序、大型团队以及拥有大量依赖的应用</li>
+<li>必须易于接近，例如接近C语言那样。</li>
+<li>现代化</li>
+<li>适合多核机器</li>
+<li>适合网络机器</li>
+<li>适合Web开发</li>
+</ul>
+<p>Go语言的设计是以软件工程为目标，所以它有这些优点：</p>
+<ul>
+<li>清晰的依赖</li>
+<li>清晰的语法</li>
+<li>清晰的语义学</li>
+<li>简单的模型（垃圾回收和并发性）</li>
+<li>便捷的工具（go tool、gofmt、godoc、gofix等）</li>
+</ul>
+<p>还有那些问题？</p>
+<p>Go语言目前所面临的最大问题在于，还没有足够的经验来证明Go是否真的是一个成功的产品，缺少大型应用实践。但是在Google内部，如golang.org、youtube.com、dl.google.com都已经开始使用Go语言开发，除此之外还有一些其它小应用（有的是在GAE上）也选择使用Go；而在Google之外，BBC Worldwide、Canonical、Heroku、Nokia、SoundCloud也都在尝试Go。</p>
+<p>总而言之，Go是由软件工程驱动的编程语言，但富有成效并且有趣，这样的设计非常高产。</p>
+<p>Rob Pike演讲的Slide可以在<a href="http://talks.golang.org/2012/splash.slide" target="_blank" rel="noopener">这里</a>看到。<br>&lt;完&gt;</p>
+<p>原文地址：<a href="http://www.csdn.net/article/2012-11-01/2811380-Go-in-Google" target="_blank" rel="noopener">http://www.csdn.net/article/2012-11-01/2811380-Go-in-Google</a></p>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/golang/">golang</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/07/28/ELK-集中式日志解决方案/">ELK-集中式日志解决方案</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/30/[转]Unix之父、C语言的发明人：Dennis M. Ritchie、Ken Thompson/">转：Unix之父、C语言的发明人：Dennis M. Ritchie、Ken Thompson</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/30/[转]每一个程序员需要了解的10个Linux命令/">转：每一个程序员需要了解的10个Linux命令</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/22/Docker-入门/">Docker 入门</a>
+      </li>
+    
+      <li>
+        <a href="/2016/10/16/[转]Linus，只是为了好玩/">转：Linus，只是为了好玩儿</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>8</small></li>
+  
+    <li><a href="/tags/docker/">docker</a><small>1</small></li>
+  
+    <li><a href="/tags/git/">git</a><small>2</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/hexo/">hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/markdown/">markdown</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>2</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>1</small></li>
+  
+    <li><a href="/tags/设计/">设计</a><small>6</small></li>
+  
+    <li><a href="/tags/调试/">调试</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 18px;">c</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 12px;">git</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/linux/" style="font-size: 18px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/文化/" style="font-size: 16px;">文化</a> <a href="/tags/测试/" style="font-size: 12px;">测试</a> <a href="/tags/监控/" style="font-size: 10px;">监控</a> <a href="/tags/设计/" style="font-size: 14px;">设计</a> <a href="/tags/调试/" style="font-size: 12px;">调试</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+          <li>
+            
+            	<a href="https://trello.com/" target="_blank" title="Trello">Trello</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.scrumcn.com/" target="_blank" title="Scrum中文网">Scrum中文网</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.processon.com/" target="_blank" title="ProcessOn">ProcessOn</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.golangtc.com/download" target="_blank" title="Go下载">Go下载</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://godoc.ml/" target="_blank" title="Go手册">Go手册</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/" target="_blank" title="Go圣经">Go圣经</a>
+            
+          </li>
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+
