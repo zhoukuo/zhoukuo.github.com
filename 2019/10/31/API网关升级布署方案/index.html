@@ -6,22 +6,7 @@
   <title>API网关升级布署方案（Nginx-&gt;Kong） › 平凡之路</title>
   <meta name="author" content="zhoukuo">
   
-  <meta name="description" content="现状目前我们使用Nginx管理以下内容
-反向代理
-负载均衡
-静态页面的服务器
-端口转发
-
-四套环境
-开发
-测试
-集成
-生产
-
-升级方案方案一
-接口的反向代理和负载均衡使用Kong，静态页面的服务器和端口转发仍然使用Nginx
-Kong的端口使用8000/8443，Nginx端口使用80/443
-升级">
+  <meta name="description" content="本文介绍如何从现有的Nginx代理服务器升级到Kong">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -74,7 +59,8 @@ Kong的端口使用8000/8443，Nginx端口使用80/443
     </header>
     <div class="entry">
       
-        <h2 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h2><h3 id="目前我们使用Nginx管理以下内容"><a href="#目前我们使用Nginx管理以下内容" class="headerlink" title="目前我们使用Nginx管理以下内容"></a>目前我们使用Nginx管理以下内容</h3><ul>
+        <p>本文介绍如何从现有的Nginx代理服务器升级到Kong<a id="more"></a></p>
+<h2 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h2><h3 id="目前我们使用Nginx管理以下内容"><a href="#目前我们使用Nginx管理以下内容" class="headerlink" title="目前我们使用Nginx管理以下内容"></a>目前我们使用Nginx管理以下内容</h3><ul>
 <li>反向代理</li>
 <li>负载均衡</li>
 <li>静态页面的服务器</li>
@@ -148,7 +134,7 @@ Kong的端口使用8000/8443，Nginx端口使用80/443
   <ul class="entry">
     
       <li>
-        <a href="/2019/11/02/Kong-API配置指南/">Kong-API配置指南</a>
+        <a href="/2019/11/02/Kong-API配置指南/">Kong-API配置指南(运维视角)</a>
       </li>
     
       <li>
