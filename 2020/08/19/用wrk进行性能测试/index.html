@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>用wrk进行性能测试 › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="一、简介wrk 是一款针对 Http 协议的基准测试工具，它能够在单机多核 CPU 的条件下，使用系统自带的高性能 I/O 机制，如 epoll，kqueue 等，通过多线程和事件模式，对目标机器产生大量的负载。
+wrk是开源的, 代码在 github 上：https://github.com/wg">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="用wrk进行性能测试">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">用wrk进行性能测试</h1>
+  
+
+      
+        <time datetime="2020-08-19T09:54:13.000Z">2020-08-19</time>
+      
+    </header>
+    <div class="entry">
+      
+        <h2 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h2><p>wrk 是一款针对 Http 协议的基准测试工具，它能够在单机多核 CPU 的条件下，使用系统自带的高性能 I/O 机制，如 epoll，kqueue 等，通过多线程和事件模式，对目标机器产生大量的负载。</p>
+<p>wrk是开源的, 代码在 github 上：<a href="https://github.com/wg/wrk" target="_blank" rel="noopener">https://github.com/wg/wrk</a></p>
+<p>安装：<a href="https://www.cnblogs.com/savorboard/p/wrk.html" target="_blank" rel="noopener">https://www.cnblogs.com/savorboard/p/wrk.html</a></p>
+<p><strong>优势</strong>：</p>
+<ul>
+<li>轻量级性能测试工具</li>
+<li>安装简单</li>
+<li>学习曲线基本为0，几分钟就学会使用了</li>
+<li>基于系统自带的高性能I/O机制，如epoll，kqueue，利用异步的事件驱动框架，通过很少的线程就可以压出很大的并发量，例如几万、几十万，这是很多性能测试工具无法做到的</li>
+</ul>
+<p><strong>劣势</strong>：</p>
+<p>wrk 目前仅支持单机压测，后续也不太可能支持多机器对目标机压测，因为它本身的定位，并不是用来取代 JMeter, LoadRunner 等专业的测试工具。</p>
+<h2 id="二、格式与用法"><a href="#二、格式与用法" class="headerlink" title="二、格式与用法"></a>二、格式与用法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">使用方法: wrk &lt;选项&gt; &lt;被测HTTP服务的URL&gt;                           </span><br><span class="line"></span><br><span class="line">  Options:                                           </span><br><span class="line">    -c, --connections &lt;N&gt;  跟服务器建立并保持的TCP连接数量 </span><br><span class="line">    -d, --duration    &lt;T&gt;  压测时间          </span><br><span class="line">    -t, --threads     &lt;N&gt;  使用多少个线程进行压测，压测时，是有一个主线程来控制我们设置的n个子线程间调度  </span><br><span class="line">                                                    </span><br><span class="line">    -s, --script      &lt;S&gt;  指定Lua脚本路径      </span><br><span class="line">    -H, --header      &lt;H&gt;  为每一个HTTP请求添加HTTP头     </span><br><span class="line">        --latency          在压测结束后，打印延迟统计信息  </span><br><span class="line">        --timeout     &lt;T&gt;  超时时间    </span><br><span class="line">    -v, --version          打印正在使用的wrk的详细版本信息                                              </span><br><span class="line"></span><br><span class="line">  &lt;N&gt;代表数字参数，支持国际单位 (1k, 1M, 1G)</span><br><span class="line">  &lt;T&gt;代表时间参数，支持时间单位 (2s, 2m, 2h)</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、简单压测及结果分析"><a href="#三、简单压测及结果分析" class="headerlink" title="三、简单压测及结果分析"></a>三、简单压测及结果分析</h2><p>做一个简单的压测，分析下结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wrk -t8 -c200 -d30s --latency  http://www.bing.com</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Running 30s <span class="built_in">test</span> @ http://www.bing.com</span><br><span class="line"></span><br><span class="line">  8 threads and 200 connections</span><br><span class="line"></span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency    46.67ms  215.38ms   1.67s    95.59%</span><br><span class="line">    Req/Sec     7.91k     1.15k   10.26k    70.77%</span><br><span class="line">  Latency Distribution</span><br><span class="line">     50%    2.93ms</span><br><span class="line">     75%    3.78ms</span><br><span class="line">     90%    4.73ms</span><br><span class="line">     99%    1.35s</span><br><span class="line">  1790465 requests <span class="keyword">in</span> 30.01s, 684.08MB <span class="built_in">read</span></span><br><span class="line">Requests/sec:  59658.29</span><br><span class="line">Transfer/sec:     22.79MB</span><br></pre></td></tr></table></figure>
+
+<p>以上是使用8个线程200个连接，对bing首页进行了30秒的压测，并要求在压测结果中输出响应延迟信息。</p>
+<p>以下是解释压测结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Running 30s <span class="built_in">test</span> @ http://www.bing.com （压测时间30s）</span><br><span class="line"></span><br><span class="line">8 threads and 200 connections （共8个测试线程，200个连接）</span><br><span class="line"></span><br><span class="line">Thread Stats   Avg      Stdev     Max      +/- Stdev</span><br><span class="line">             （平均值） （标准差）  （最大值） （正负一个标准差所占比例）</span><br><span class="line">Latency        46.67ms  215.38ms  1.67s    95.59%</span><br><span class="line">（延迟）</span><br><span class="line">Req/Sec        7.91k    1.15k     10.26k   70.77%</span><br><span class="line">（请求数）</span><br><span class="line"></span><br><span class="line">Latency Distribution （延迟分布）</span><br><span class="line">50%    2.93ms</span><br><span class="line">75%    3.78ms</span><br><span class="line">90%    4.73ms</span><br><span class="line">99%    1.35s （99分位的延迟：%99的请求在1.35s以内）</span><br><span class="line">1790465 requests <span class="keyword">in</span> 30.01s, 684.08MB <span class="built_in">read</span> （30.01秒内共处理完成了1790465个请求，读取了684.08MB数据）</span><br><span class="line">Requests/sec:  59658.29 （平均每秒处理完成59658.29个请求）</span><br><span class="line">Transfer/sec:   22.79MB （平均每秒读取数据22.79MB）</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、使用lua脚本进行压测"><a href="#四、使用lua脚本进行压测" class="headerlink" title="四、使用lua脚本进行压测"></a>四、使用lua脚本进行压测</h2><p>lua脚本是一种轻量小巧的脚本语言，用标准c语言编写，并以源代码形式开放，其设计目的是为了嵌入应用程序中，从而为程序提供灵活的扩展和定制功能。wrk工具嵌入了lua脚本语言，因此，在自定义压测场景时，可在wrk目录下使用lua定制压测场景。</p>
+<h3 id="1、lua声明周期"><a href="#1、lua声明周期" class="headerlink" title="1、lua声明周期"></a>1、lua声明周期</h3><p>共有三个阶段，启动阶段，运行阶段，结束阶段。wrk支持在这三个阶段对压测进行个性化。</p>
+<p><strong>启动阶段</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setup</span><span class="params">(thread)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在脚本文件中实现setup方法，wrk就会在测试线程已经初始化但还没有启动的时候调用该方法。wrk会为每一个测试线程调用一次setup方法，并传入代表测试线程的对象thread作为参数。setup方法中可操作该thread对象，获取信息、存储信息、甚至关闭该线程。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">thread.addr - get <span class="keyword">or</span> set the thread<span class="string">'s server address</span></span><br><span class="line"><span class="string">thread:get(name) - get the value of a global in the thread'</span>s env</span><br><span class="line">thread:set(name, value) - set the value of a global <span class="keyword">in</span> the thread<span class="string">'s env</span></span><br><span class="line"><span class="string">thread:stop() - stop the thread</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>运行阶段</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">(args)</span></span>  <span class="comment">--由测试线程调用，只会在进入运行阶段时，调用一次。支持从启动wrk的命令中，获取命令行参数；</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">delay</span><span class="params">()</span></span>  <span class="comment">--在每次发送request之前调用，如果需要delay，那么delay相应时间；</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">request</span><span class="params">()</span></span>  <span class="comment">--用来生成请求；每一次请求都会调用该方法，所以注意不要在该方法中做耗时的操作；</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">response</span><span class="params">(status, headers, body)</span></span>  <span class="comment">--在每次收到一个响应时调用；为提升性能，如果没有定义该方法，那么wrk不会解析headers和body；</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>结束阶段</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">done</span><span class="params">(summary, latency, requests)</span></span>  <span class="comment">--在整个测试过程中只会调用一次，可从参数给定的对象中，获取压测结果，生成定制化的测试报告。</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2、自定义脚本中可访问的变量和方法："><a href="#2、自定义脚本中可访问的变量和方法：" class="headerlink" title="2、自定义脚本中可访问的变量和方法："></a>2、自定义脚本中可访问的变量和方法：</h3><p><strong>变量：wrk</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">wrk = &#123;</span><br><span class="line">    scheme  = <span class="string">"http"</span>,</span><br><span class="line">    host    = <span class="string">"localhost"</span>,</span><br><span class="line">    port    = <span class="literal">nil</span>,</span><br><span class="line">    method  = <span class="string">"GET"</span>,</span><br><span class="line">    <span class="built_in">path</span>    = <span class="string">"/"</span>,</span><br><span class="line">    headers = &#123;&#125;,</span><br><span class="line">    body    = <span class="literal">nil</span>,</span><br><span class="line">    thread  = &lt;userdata&gt;,</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法：wrk.fomat wrk.lookup wrk.connect</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wrk.format</span><span class="params">(method, path, headers, body)</span></span>  <span class="comment">--根据参数和全局变量wrk，生成一个HTTP rquest string。</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wrk.lookup</span><span class="params">(host, service)</span></span>  <span class="comment">--给定host和service（port/well known service name），返回所有可用的服务器地址信息。</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wrk.connect</span><span class="params">(addr)</span></span>  <span class="comment">--测试与给定的服务器地址信息是否可以成功创建连接</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3、lua脚本压测实例"><a href="#3、lua脚本压测实例" class="headerlink" title="3、lua脚本压测实例"></a>3、lua脚本压测实例</h3><p><strong>压测命令：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wrk -t8 -c200 -d30s --latency  -s test.lua http://www.bing.com</span><br></pre></td></tr></table></figure>
+
+<p>test.lua是用lua写的压测脚本，如下是压测脚本的实例：</p>
+<p><strong>使用post方法压测</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">wrk.method = <span class="string">"POST"</span></span><br><span class="line">wrk.headers[<span class="string">"S-COOKIE2"</span>]=<span class="string">"a=2&amp;b=Input&amp;c=10.0&amp;d=20191114***"</span></span><br><span class="line">wrk.body = <span class="string">"recent_seven=20191127_32;20191128_111"</span></span><br><span class="line">wrk.headers[<span class="string">"Host"</span>]=<span class="string">"api.shouji.**.com"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">response</span><span class="params">(status,headers,body)</span></span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">status</span> ~= <span class="number">200</span> <span class="keyword">then</span> <span class="comment">--将服务器返回状态码不是200的请求结果打印出来</span></span><br><span class="line">                <span class="built_in">print</span>(body)</span><br><span class="line">        <span class="comment">--      wrk.thread:stop()</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>发送json</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">request = <span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">local</span> headers = &#123; &#125;</span><br><span class="line">    headers[<span class="string">'Content-Type'</span>] = <span class="string">"application/json"</span></span><br><span class="line">    body = &#123;</span><br><span class="line">        mobile=&#123;<span class="string">"1533899828"</span>&#125;,</span><br><span class="line">        params=&#123;code=<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1000</span>,<span class="number">9999</span>)&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">local</span> cjson = <span class="built_in">require</span>(<span class="string">"cjson"</span>)</span><br><span class="line">    body_str = cjson.encode(body)</span><br><span class="line">    <span class="keyword">return</span> wrk.<span class="built_in">format</span>(<span class="string">'POST'</span>, <span class="literal">nil</span>, headers, body_str)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>wrk读取文件，实现随机header-cookie</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">idArr = &#123;&#125;</span><br><span class="line">falg = <span class="number">0</span></span><br><span class="line">wrk.method = <span class="string">"POST"</span></span><br><span class="line">wrk.body = <span class="string">"a=1"</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">(args)</span></span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">io</span>.<span class="built_in">lines</span>(<span class="string">"integral/cookies.txt"</span>) <span class="keyword">do</span></span><br><span class="line">                <span class="built_in">print</span>(line)</span><br><span class="line">                idArr[falg] = line</span><br><span class="line">                falg = falg+<span class="number">1</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        falg = <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--wrk.method = "POST"</span></span><br><span class="line"><span class="comment">--wrk.body = "a=1"</span></span><br><span class="line"><span class="comment">--wrk.path = "/v1/points/reading"</span></span><br><span class="line"></span><br><span class="line">request = <span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">        parms = idArr[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">0</span>,<span class="number">4</span>)] <span class="comment">--随机传递文件中的参数</span></span><br><span class="line">        <span class="comment">--parms = idArr[falg%(table.getn(idArr)+1)] 循环传递文件中的参数</span></span><br><span class="line">        wrk.headers[<span class="string">"S-COOKIE2"</span>] = parms</span><br><span class="line">        falg = falg+<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> wrk.<span class="built_in">format</span>()</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>wrk创建数组并初始化，拼接随机参数</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">idArr = &#123;&#125;;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">(args)</span></span></span><br><span class="line">        idArr[<span class="number">1</span>] = <span class="string">"1"</span>;</span><br><span class="line">        idArr[<span class="number">2</span>] = <span class="string">"2"</span>;</span><br><span class="line">        idArr[<span class="number">3</span>] = <span class="string">"3"</span>;</span><br><span class="line">        idArr[<span class="number">4</span>] = <span class="string">"4"</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">request = <span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">        parms = idArr[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>,<span class="number">4</span>)]</span><br><span class="line">        <span class="built_in">path</span> = <span class="string">"/v1/points/reading?id="</span>..parms</span><br><span class="line">        <span class="keyword">return</span> wrk.<span class="built_in">format</span>(<span class="string">"GET"</span>,<span class="built_in">path</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/测试/">测试</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/19/用wrk进行性能测试/">用wrk进行性能测试</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2019/12/01/微服务RESTful接口设计规范/">微服务RESTful接口设计规范</a>
+      </li>
+    
+      <li>
+        <a href="/2019/12/01/JavaScript编码规范/">JavaScript编码规范</a>
+      </li>
+    
+      <li>
+        <a href="/2019/11/02/Kong-API配置指南/">Kong-API配置指南(运维视角)</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>6</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>2</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>4</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>5</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 17.14px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 17.14px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.43px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 14.29px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 18.57px;">文化</a> <a href="/tags/服务网关/" style="font-size: 14.29px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15.71px;">测试</a> <a href="/tags/监控/" style="font-size: 12.86px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+          <li>
+            
+            	<a href="https://trello.com/" target="_blank" title="Trello">Trello</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.scrumcn.com/" target="_blank" title="Scrum中文网">Scrum中文网</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.processon.com/" target="_blank" title="ProcessOn">ProcessOn</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.golangtc.com/download" target="_blank" title="Go下载">Go下载</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://godoc.ml/" target="_blank" title="Go手册">Go手册</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/" target="_blank" title="Go圣经">Go圣经</a>
+            
+          </li>
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+
