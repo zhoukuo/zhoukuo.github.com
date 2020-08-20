@@ -3,15 +3,13 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
-  <title>API网关升级布署方案（Nginx-&gt;Kong） › 平凡之路</title>
+  <title>第 7 页 › 平凡之路</title>
   <meta name="author" content="zhoukuo">
-  
-  <meta name="description" content="本文介绍如何从现有的Nginx代理服务器升级到Kong">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="API网关升级布署方案（Nginx-&gt;Kong）">
+  
   <meta property="og:site_name" content="平凡之路">
 
   
@@ -45,67 +43,31 @@
 <div class="clearfix"></div>
 </header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper">
+  <article class="post">
   <div class="post-content">
     <header>
       
   
-    <h1 class="title">API网关升级布署方案（Nginx-&gt;Kong）</h1>
+    <h1 class="title"><a href="/2016/07/20/[转]C-语言的前世今生/">转：C 语言的前世今生</a></h1>
   
 
       
-        <time datetime="2019-10-31T03:51:58.000Z">2019-10-31</time>
+        <time datetime="2016-07-20T03:53:36.000Z">2016-07-20</time>
       
     </header>
     <div class="entry">
       
-        <p>本文介绍如何从现有的Nginx代理服务器升级到Kong<a id="more"></a></p>
-<h2 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h2><h3 id="目前我们使用Nginx管理以下内容"><a href="#目前我们使用Nginx管理以下内容" class="headerlink" title="目前我们使用Nginx管理以下内容"></a>目前我们使用Nginx管理以下内容</h3><ul>
-<li>反向代理</li>
-<li>负载均衡</li>
-<li>静态页面的服务器</li>
-<li>端口转发</li>
-</ul>
-<h3 id="四套环境"><a href="#四套环境" class="headerlink" title="四套环境"></a>四套环境</h3><ul>
-<li>开发</li>
-<li>测试</li>
-<li>集成</li>
-<li>生产</li>
-</ul>
-<h2 id="升级方案"><a href="#升级方案" class="headerlink" title="升级方案"></a>升级方案</h2><h3 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h3><ol>
-<li>接口的反向代理和负载均衡使用Kong，静态页面的服务器和端口转发仍然使用Nginx</li>
-<li>Kong的端口使用8000/8443，Nginx端口使用80/443</li>
-<li>升级后，前后端需要使用不同的域名：前端沿用目前的不变，服务端API域名增加一个api后缀区分，如：前端域名为：dev.51trust.com，服务端API域名为：dev-api.51trust.com</li>
-<li>前端请求接口的写法需要调整，目前假设前后端使用相同域名，编码上采用相对路径；升级后，需要把相对路径修改</li>
-</ol>
-<p>优点：前后端分流，减轻Nginx压力</p>
-<p>缺点：接口调用需要调整，尤其是第三方厂商的调用和低版本App兼容，调整成本较高</p>
-<h3 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h3><p>前两点和方案一相同</p>
-<ol start="3">
-<li>升级后，前后端仍然使用相同的域名，所有流量先打到Nginx，然后优先匹配前端路由，没有匹配项时转到Kong</li>
-<li>前后端无需任何调整</li>
-</ol>
-<p>优点：前后端接口无需任何调整</p>
-<p>缺点：Nginx流量压力没有减轻</p>
-<h2 id="布署方案"><a href="#布署方案" class="headerlink" title="布署方案"></a>布署方案</h2><ol>
-<li>konga为管理端，可通过配置，管理所有kong节点，布署2套，阿里云：192.168.1.6，内网：192.168.126.21</li>
-<li>konga云端的访问域名：kong.51trust.com，内网使用IP访问</li>
-<li>kong布署4套，每个环境一套，复用Nginx节点，Kong的端口使用8000/8443，Nginx端口使用80/443（生产环境目前医师端和公众端的Nginx是分开的，暂时保持不变，每个Nginx对应一个Kong）</li>
-<li>pgsql布署2套，内网一套（192.168.126.122），已部署，云端一套（192.168.2.12，复用redis副本）</li>
-<li>kong数据库，名称：开发：kongdev，测试：kongbeta，集成：kongpre，生产：kongon，用户名密码共用一套</li>
-</ol>
-
+        <p>C 语言，从 1970 年代设计并实现之初，它就注定了带有强烈工程师文化的语言，而缺乏一些学术气息。
       
     </div>
       
-      <footer>
         
+        <footer>
+          <div class="alignleft">
+            <a href="/2016/07/20/[转]C-语言的前世今生/#more" class="more-link">Read More ›</a>
+          </div>
         
-  
-  <div>
-    <a href="/tags/服务网关/">服务网关</a>
-  </div>
-
         
       
       <div class="clearfix"></div>
@@ -114,12 +76,17 @@
 </article>
 
 
-<section id="comment">
+
+
+
+
+<nav id="pagination">
   
-</section>
-
-
-</div></div>
+    <a href="/page/6/" class="alignleft">上一页</a>
+  
+  
+  <div class="clearfix"></div>
+</nav></div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
