@@ -199,52 +199,14 @@
     <div class="entry">
       
         <p>draw.io 是一个强大简洁的在线的绘图网站，支持流程图，UML图，架构图，原型图等图标。支持Github，Google Drive, One drive等网盘同步，并且永久免费。如果觉得使用Web版不方便，draw.io 也提供了多平台的离线桌面版可供下载。</p>
-<p><img src="/img/drawio.png"></p>
-<p>在线版：<a href="https://www.draw.io/" target="_blank" rel="noopener">https://www.draw.io/</a></p>
-<p>本地部署版：<a href="https://github.com/jgraph/drawio/releases/latest" target="_blank" rel="noopener">https://github.com/jgraph/drawio/releases/latest</a></p>
-<p>PC 安装版：<a href="https://github.com/jgraph/drawio-desktop/releases/latest" target="_blank" rel="noopener">https://github.com/jgraph/drawio-desktop/releases/latest</a></p>
-<p>第一次使用，可以点击“language”切换为简体中文哦！</p>
-<p>本文的主要内容如下:</p>
-<ul>
-<li>draw.io 的核心设计元素</li>
-<li>draw.io 的基本操作</li>
-<li>使用 draw.io 绘制简单流程图</li>
-</ul>
-<h2 id="核心设计"><a href="#核心设计" class="headerlink" title="核心设计"></a>核心设计</h2><p>在学习基本操作之前我们先来了解一下draw.io的基本设计，对网页的元素有一个直观的认识。有了基本的框架，学习起来就有迹可循了。大部分的绘图应用都离不开三个基本的元素，图形，链接，文本。每个元素都有基本的操作和样式，元素与元素之间又可以进行组合，“三生万物”，生成各种各样的图表。</p>
-<p>首先打开draw.io的网站，加载之后会出现以下的画面。这里是选择图表保存的方式，你可以选择常用的网盘，也可以选择decide later 在之后绘图结束保存的时候在进行选择。</p>
-<h3 id="绘图区"><a href="#绘图区" class="headerlink" title="绘图区"></a>绘图区</h3><p>进入应用后，界面非常直观简洁。顶部菜单栏提供各项基本操作，左侧是图形区，中间部分是画布，右侧部分是检查器，根据当前的元素显示不同的操作。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/1762071-6111eb50d0ecb46f.png"></p>
-<h3 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h3><p>整个界面的操作非常直观，如果有相关绘图软件的使用经验，相信已经可以上手绘图了。</p>
-<h4 id="添加图形"><a href="#添加图形" class="headerlink" title="添加图形"></a>添加图形</h4><p>通过简单的拖拽，即可在画布上面添加图形。</p>
-<h4 id="添加文本"><a href="#添加文本" class="headerlink" title="添加文本"></a>添加文本</h4><p>在画布上任何位置双击都可以添加文本框，在其中输入文字</p>
-<h4 id="添加链接"><a href="#添加链接" class="headerlink" title="添加链接"></a>添加链接</h4><p>在图形上鼠标悬浮，在图形上会浮现基本的链接点。这里分为外边界蓝色的大箭头和边上的x型焦点。这两种链接方式稍有不同，在后面我会详细说明。</p>
-<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><h3 id="移动、多选、复制与删除"><a href="#移动、多选、复制与删除" class="headerlink" title="移动、多选、复制与删除"></a>移动、多选、复制与删除</h3><p>图形、链接、文本这三个元素都可以被选中。可以使用cmd(windows下为ctrl，下同) + A 选择全部元素，也可以使用cmd + click(鼠标左键点击)来进行特定元素的多选。选择元素后可以进行以下操作</p>
-<ul>
-<li>移动：拖拽</li>
-<li>复制： cmd + C</li>
-<li>复制并粘贴： cmd + D</li>
-<li>删除：delete键</li>
-</ul>
-<h3 id="创建链接"><a href="#创建链接" class="headerlink" title="创建链接"></a>创建链接</h3><p>上面提到过在图形上面悬浮鼠标会出现图形的链接点。</p>
-<h4 id="使用蓝色箭头进行快速链接"><a href="#使用蓝色箭头进行快速链接" class="headerlink" title="使用蓝色箭头进行快速链接"></a>使用蓝色箭头进行快速链接</h4><ul>
-<li>点击蓝色箭头，会在指定方向创建链接，并在链接末端生成一个完全一致的元素</li>
-<li>如果需要控制链接位置，可以按住ctrl键，拖拽蓝色箭头到指定位置</li>
-</ul>
-<h4 id="链接图形"><a href="#链接图形" class="headerlink" title="链接图形"></a>链接图形</h4><ul>
-<li>在悬浮图形后选择x型焦点（会高亮为绿色）可以创建链接，拖拽链接线到目标图形上的x型焦点，完成固定链接</li>
-<li>在悬浮图形后选择x型焦点（会高亮为绿色）可以创建链接，拖拽链接线到目标图形的边上，直到图形外边变成蓝色，松开鼠标，完成浮动链接</li>
-</ul>
-<p>固定链接是指链接始终固定在图形的链接点上，不会随着图形移动而变化，浮动链接则会根据图形的移动在图形的边上进行移动自适应。如下图，固定链接始终固定在右边，而浮动链接则从上边移动到了下边</p>
-<h3 id="图形替换与旋转"><a href="#图形替换与旋转" class="headerlink" title="图形替换与旋转"></a>图形替换与旋转</h3><p>通过快速创建链接的方式可以快速的创建图形并进行链接，但是如果需要不同的图形呢</p>
-<ul>
-<li>替换：从左侧图形库选择需要的图形，拖拽到要替换的图形中央，直到出现了一个替换的褐色标志，松开即可实现替换</li>
-<li>旋转：选中图形，拖拽上方的旋转箭头即可</li>
-</ul>
-<h3 id="保存和导出"><a href="#保存和导出" class="headerlink" title="保存和导出"></a>保存和导出</h3><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>实际上借助draw.io的模板库还可以绘制更多种类的图，包括UML图，结构图等等。限于篇幅本文就不进行介绍了，但是总体还是离不开本文介绍的基本操作。希望大家阅读完本文能够有所收获，绘制简洁大方的图表，提升自己的软实力！</p>
-
       
     </div>
       
+        
+        <footer>
+          <div class="alignleft">
+            <a href="/2020/06/10/Draw-io-自认为最好用的流程图绘制软件/#more" class="more-link">Read More ›</a>
+          </div>
         
         
       
