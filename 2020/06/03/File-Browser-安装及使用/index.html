@@ -67,12 +67,8 @@
 <p>File Browser 在 Linux 的安装非常简单，只需要一条命令就可以搞定：curl -fsSL <a href="https://filebrowser.xyz/get.sh" target="_blank" rel="noopener">https://filebrowser.xyz/get.sh</a> | bash，你也可以手动下载可执行文件进行安装：<a href="https://github.com/filebrowser/filebrowser/releases/latest" target="_blank" rel="noopener">https://github.com/filebrowser/filebrowser/releases/latest</a></p>
 <p>当安装好之后，你并不能立即使用它，需要修改一些配置。</p>
 <p>以下设置方法只适用 File Browser 2.0 +</p>
-<p>创建配置数据库：filebrowser -d /etc/filebrowser.db config init</p>
-<p>设置监听地址：filebrowser -d /etc/filebrowser.db config set –address 0.0.0.0</p>
-<p>设置监听端口：filebrowser -d /etc/filebrowser.db config set –port 8088</p>
-<p>设置语言环境：filebrowser -d /etc/filebrowser.db config set –locale zh-cn</p>
-<p>设置日志位置：filebrowser -d /etc/filebrowser.db config set –log /var/log/filebrowser.log</p>
-<p>添加一个用户：filebrowser -d /etc/filebrowser.db users add root password –perm.admin，其中的root和password分别是用户名和密码，根据自己的需求更改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">创建配置数据库：filebrowser -d /etc/filebrowser.db config init</span><br><span class="line"></span><br><span class="line">设置监听地址：filebrowser -d /etc/filebrowser.db config set --address 0.0.0.0</span><br><span class="line"></span><br><span class="line">设置监听端口：filebrowser -d /etc/filebrowser.db config set --port 8088</span><br><span class="line"></span><br><span class="line">设置语言环境：filebrowser -d /etc/filebrowser.db config set --locale zh-cn</span><br><span class="line"></span><br><span class="line">设置日志位置：filebrowser -d /etc/filebrowser.db config set --log /var/log/filebrowser.log</span><br><span class="line"></span><br><span class="line">添加一个用户：filebrowser -d /etc/filebrowser.db users add root password --perm.admin，其中的root和password分别是用户名和密码，根据自己的需求更改。</span><br></pre></td></tr></table></figure>
+
 <p>有关更多配置的选项，可以参考官方文档：<a href="https://docs.filebrowser.xyz/" target="_blank" rel="noopener">https://docs.filebrowser.xyz/</a></p>
 <p>配置修改好以后，就可以启动 File Browser 了，使用-d参数指定配置数据库路径。示例：filebrowser -d /etc/filebrowser.db</p>
 <p>启动成功就可以使用浏览器访问 File Browser 了，在浏览器输入 IP:端口，示例：<a href="http://192.168.1.1:8088/" target="_blank" rel="noopener">http://192.168.1.1:8088</a></p>
@@ -83,18 +79,13 @@
 <p><img src="https://cdn.mivm.cn/www.mivm.cn/archives/filebrowser/01.jpg"></p>
 <h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="后台运行"><a href="#后台运行" class="headerlink" title="后台运行"></a>后台运行</h3><p>File Browser 默认是前台运行，如何让它后台运行呢？</p>
 <p>第一种是 nohup 大法：</p>
-<p>运行：nohup filebrowser -d /etc/filebrowser.db &gt;/dev/null 2&gt;&amp;1 &amp;</p>
-<p>停止运行：kill -9 $(pidof filebrowser)</p>
-<p>开机启动：sed -i ‘/exit 0/i\nohup filebrowser -d /etc/filebrowser.db &gt;/dev/null 2&gt;&amp;1 &amp;’ /etc/rc.local</p>
-<p>取消开机启动：sed -i ‘/nohup filebrowser -d /etc/filebrowser.db &gt;/dev/null 2&gt;&amp;1 &amp;/d’ /etc/rc.local</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">运行：nohup filebrowser -d /etc/filebrowser.db &gt;/dev/null 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">停止运行：kill -9 $(pidof filebrowser)</span><br><span class="line"></span><br><span class="line">开机启动：sed -i &apos;/exit 0/i\nohup filebrowser -d \/etc\/filebrowser.db &gt;\/dev\/null 2&gt;&amp;1 &amp;&apos; /etc/rc.local</span><br><span class="line"></span><br><span class="line">取消开机启动：sed -i &apos;/nohup filebrowser -d \/etc\/filebrowser.db &gt;\/dev\/null 2&gt;&amp;1 &amp;/d&apos; /etc/rc.local</span><br></pre></td></tr></table></figure>
+
 <p>第二种是 systemd 大法：</p>
 <p>首先下载 File Browser 的 service 文件：curl <a href="https://cdn.mivm.cn/www.mivm.cn/archives/filebrowser/filebrowser.service" target="_blank" rel="noopener">https://cdn.mivm.cn/www.mivm.cn/archives/filebrowser/filebrowser.service</a> -o /lib/systemd/system/filebrowser.service</p>
 <p>如果你的运行命令不是/usr/local/bin/filebrowser -d /etc/filebrowser.db，需要对 service 文件进行修改，将文件的 ExecStart 改为你的运行命令，更改完成后需要输入systemctl daemon-reload。</p>
-<p>运行：systemctl start filebrowser.service</p>
-<p>停止运行：systemctl stop filebrowser.service</p>
-<p>开机启动：systemctl enable filebrowser.service</p>
-<p>取消开机启动：systemctl disable filebrowser.service</p>
-<p>查看运行状态：systemctl status filebrowser.service</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">运行：systemctl start filebrowser.service</span><br><span class="line"></span><br><span class="line">停止运行：systemctl stop filebrowser.service</span><br><span class="line"></span><br><span class="line">开机启动：systemctl enable filebrowser.service</span><br><span class="line"></span><br><span class="line">取消开机启动：systemctl disable filebrowser.service</span><br><span class="line"></span><br><span class="line">查看运行状态：systemctl status filebrowser.service</span><br></pre></td></tr></table></figure>
+
 <p>我推荐使用 systemd 的方法来后台运行，当然，前提是你所使用的操作系统支持 systemd。</p>
 <h3 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h3><p>File Browser 2.0 起开始内建 HTTPS 支持，只需要配置 SSL 证书即可。</p>
 <p>配置 SSL：filebrowser -d /etc/filebrowser.db config set –cert example.com.crt –key example.com.key，其中example.com.crt和example.com.key分别是 SSL 证书和密钥路径，根据自身情况进行更改。配置完 SSL 后，只可以使用 HTTPS 访问，不可以使用 HTTP。</p>
