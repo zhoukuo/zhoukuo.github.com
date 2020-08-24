@@ -1,0 +1,2070 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>转-SED简明教程 › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="awk于1977年出生，今年36岁本命年，sed比awk大2-3岁，awk就像林妹妹，sed就是宝玉哥哥了。所以 林妹妹跳了个Topless，他的哥哥sed坐不住了，也一定要出来抖一抖。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="转-SED简明教程">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">转-SED简明教程</h1>
+  
+
+      
+        <time datetime="2020-04-11T08:29:25.000Z">2020-04-11</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>awk于1977年出生，今年36岁本命年，sed比awk大2-3岁，awk就像林妹妹，sed就是宝玉哥哥了。所以 林妹妹跳了个Topless，他的哥哥sed坐不住了，也一定要出来抖一抖。<a id="more"></a></p>
+<p>sed全名叫stream editor，流编辑器，用程序的方式来编辑文本，相当的hacker啊。sed基本上就是玩正则模式匹配，所以，玩sed的人，正则表达式一般都比较强。</p>
+<p>同样，本篇文章不会说sed的全部东西，你可以参看sed的手册，我这里主要还是想和大家竞争一下那些从手机指缝间或马桶里流走的时间，用这些时间来学习一些东西。当然，接下来的还是要靠大家自己双手。</p>
+<h2 id="用s命令替换"><a href="#用s命令替换" class="headerlink" title="用s命令替换"></a>用s命令替换</h2><p>我使用下面的这段文本做演示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ cat pets.txt</span><br><span class="line">This is my cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line">This is my dog</span><br><span class="line">  my dog&apos;s name is frank</span><br><span class="line">This is my fish</span><br><span class="line">  my fish&apos;s name is george</span><br><span class="line">This is my goat</span><br><span class="line">  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>把其中的my字符串替换成Hao Chen’s，下面的语句应该很好理解（s表示替换命令，/my/表示匹配my，/Hao Chen’s/表示把匹配替换成Hao Chen’s，/g 表示一行上的替换所有的匹配）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &quot;s/my/Hao Chen&apos;s/g&quot; pets.txt</span><br><span class="line">This is Hao Chen&apos;s cat</span><br><span class="line">  Hao Chen&apos;s cat&apos;s name is betty</span><br><span class="line">This is Hao Chen&apos;s dog</span><br><span class="line">  Hao Chen&apos;s dog&apos;s name is frank</span><br><span class="line">This is Hao Chen&apos;s fish</span><br><span class="line">  Hao Chen&apos;s fish&apos;s name is george</span><br><span class="line">This is Hao Chen&apos;s goat</span><br><span class="line">  Hao Chen&apos;s goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>注意：如果你要使用单引号，那么你没办法通过\’这样来转义，就有双引号就可以了，在双引号内可以用\”来转义。</p>
+<p>再注意：上面的sed并没有对文件的内容改变，只是把处理过后的内容输出，如果你要写回文件，你可以使用重定向，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sed &quot;s/my/Hao Chen&apos;s/g&quot; pets.txt &gt; hao_pets.txt</span><br></pre></td></tr></table></figure>
+
+<p>或使用 -i 参数直接修改文件内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sed -i &quot;s/my/Hao Chen&apos;s/g&quot; pets.txt</span><br></pre></td></tr></table></figure>
+
+<p>在每一行最前面加点东西：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/^/#/g&apos; pets.txt</span><br><span class="line">#This is my cat</span><br><span class="line">#  my cat&apos;s name is betty</span><br><span class="line">#This is my dog</span><br><span class="line">#  my dog&apos;s name is frank</span><br><span class="line">#This is my fish</span><br><span class="line">#  my fish&apos;s name is george</span><br><span class="line">#This is my goat</span><br><span class="line">#  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/^/#/g&apos; pets.txt</span><br><span class="line">#This is my cat</span><br><span class="line">#  my cat&apos;s name is betty</span><br><span class="line">#This is my dog</span><br><span class="line">#  my dog&apos;s name is frank</span><br><span class="line">#This is my fish</span><br><span class="line">#  my fish&apos;s name is george</span><br><span class="line">#This is my goat</span><br><span class="line">#  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>在每一行最后面加点东西：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/$/ --- /g&apos; pets.txt</span><br><span class="line">This is my cat ---</span><br><span class="line">  my cat&apos;s name is betty ---</span><br><span class="line">This is my dog ---</span><br><span class="line">  my dog&apos;s name is frank ---</span><br><span class="line">This is my fish ---</span><br><span class="line">  my fish&apos;s name is george ---</span><br><span class="line">This is my goat ---</span><br><span class="line">  my goat&apos;s name is adam ---</span><br></pre></td></tr></table></figure>
+
+<p>顺手介绍一下正则表达式的一些最基本的东西：</p>
+<ul>
+<li>^ 表示一行的开头。如：/^#/ 以#开头的匹配。</li>
+<li>$ 表示一行的结尾。如：/}$/ 以}结尾的匹配。</li>
+<li>&lt; 表示词首。 如：&lt;abc 表示以 abc 为首的詞。</li>
+<li>&gt; 表示词尾。 如：abc&gt; 表示以 abc 結尾的詞。</li>
+<li>. 表示任何单个字符。</li>
+<li><ul>
+<li>表示某个字符出现了0次或多次。</li>
+</ul>
+</li>
+<li><input disabled type="checkbox"> 字符集合。 如：[abc] 表示匹配a或b或c，还有 [a-zA-Z] 表示匹配所有的26个字符。如果其中有^表示反，如 [^a] 表示非a的字符</li>
+</ul>
+<p>正规则表达式是一些很牛的事，比如我们要去掉某html中的tags：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;b&gt;This&lt;/b&gt; is what &lt;span style=&quot;text-decoration: underline;&quot;&gt;I&lt;/span&gt; meant. Understand?</span><br></pre></td></tr></table></figure>
+
+<p>看看我们的sed命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 如果你这样搞的话，就会有问题</span><br><span class="line">$ sed &apos;s/&lt;.*&gt;//g&apos; html.txt</span><br><span class="line"> Understand?</span><br><span class="line"></span><br><span class="line"># 要解决上面的那个问题，就得像下面这样。</span><br><span class="line"># 其中的&apos;[^&gt;]&apos; 指定了除了&gt;的字符重复0次或多次。</span><br><span class="line">$ sed &apos;s/&lt;[^&gt;]*&gt;//g&apos; html.txt</span><br><span class="line">This is what I meant. Understand?</span><br></pre></td></tr></table></figure>
+
+<p>我们再来看看指定需要替换的内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &quot;3s/my/your/g&quot; pets.txt</span><br><span class="line">This is my cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line">This is your dog</span><br><span class="line">  my dog&apos;s name is frank</span><br><span class="line">This is my fish</span><br><span class="line">  my fish&apos;s name is george</span><br><span class="line">This is my goat</span><br><span class="line">  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>下面的命令只替换第3到第6行的文本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &quot;3,6s/my/your/g&quot; pets.txt</span><br><span class="line">This is my cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line">This is your dog</span><br><span class="line">  your dog&apos;s name is frank</span><br><span class="line">This is your fish</span><br><span class="line">  your fish&apos;s name is george</span><br><span class="line">This is my goat</span><br><span class="line">  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>只替换每一行的第一个s：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/s/S/1&apos; my.txt</span><br><span class="line">ThiS is my cat, my cat&apos;s name is betty</span><br><span class="line">ThiS is my dog, my dog&apos;s name is frank</span><br><span class="line">ThiS is my fish, my fish&apos;s name is george</span><br><span class="line">ThiS is my goat, my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>只替换每一行的第二个s：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/s/S/2&apos; my.txt</span><br><span class="line">This iS my cat, my cat&apos;s name is betty</span><br><span class="line">This iS my dog, my dog&apos;s name is frank</span><br><span class="line">This iS my fish, my fish&apos;s name is george</span><br><span class="line">This iS my goat, my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>只替换第一行的第3个以后的s：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/s/S/3g&apos; my.txt</span><br><span class="line">This is my cat, my cat&apos;S name iS betty</span><br><span class="line">This is my dog, my dog&apos;S name iS frank</span><br><span class="line">This is my fiSh, my fiSh&apos;S name iS george</span><br><span class="line">This is my goat, my goat&apos;S name iS adam</span><br></pre></td></tr></table></figure>
+
+<h2 id="多个匹配"><a href="#多个匹配" class="headerlink" title="多个匹配"></a>多个匹配</h2><p>如果我们需要一次替换多个模式，可参看下面的示例：（第一个模式把第一行到第三行的my替换成your，第二个则把第3行以后的This替换成了That）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;1,3s/my/your/g; 3,$s/This/That/g&apos; my.txt</span><br><span class="line">This is your cat, your cat&apos;s name is betty</span><br><span class="line">This is your dog, your dog&apos;s name is frank</span><br><span class="line">That is your fish, your fish&apos;s name is george</span><br><span class="line">That is my goat, my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>上面的命令等价于：（注：下面使用的是sed的-e命令行参数）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e &apos;1,3s/my/your/g&apos; -e &apos;3,$s/This/That/g&apos; my.txt</span><br></pre></td></tr></table></figure>
+
+<p>我们可以使用&amp;来当做被匹配的变量，然后可以在基本左右加点东西。如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/my/[&amp;]/g&apos; my.txt</span><br><span class="line">This is [my] cat, [my] cat&apos;s name is betty</span><br><span class="line">This is [my] dog, [my] dog&apos;s name is frank</span><br><span class="line">This is [my] fish, [my] fish&apos;s name is george</span><br><span class="line">This is [my] goat, [my] goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<h2 id="圆括号匹配"><a href="#圆括号匹配" class="headerlink" title="圆括号匹配"></a>圆括号匹配</h2><p>使用圆括号匹配的示例：（圆括号括起来的正则表达式所匹配的字符串会可以当成变量来使用，sed中使用的是\1,\2…）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;s/This is my \([^,&amp;]*\),.*is \(.*\)/\1:\2/g&apos; my.txt</span><br><span class="line">cat:betty</span><br><span class="line">dog:frank</span><br><span class="line">fish:george</span><br><span class="line">goat:adam</span><br></pre></td></tr></table></figure>
+
+<p>上面这个例子中的正则表达式有点复杂，解开如下（去掉转义字符）：</p>
+<p>正则为：This is my ([^,]*),.<em>is (.</em>)<br>匹配为：This is my (cat),……….is (betty)</p>
+<p>然后：\1就是cat，\2就是betty</p>
+<h2 id="sed的命令"><a href="#sed的命令" class="headerlink" title="sed的命令"></a>sed的命令</h2><p>让我们回到最一开始的例子pets.txt，让我们来看几个命令：</p>
+<h3 id="N命令"><a href="#N命令" class="headerlink" title="N命令"></a>N命令</h3><p>先来看N命令 —— 把下一行的内容纳入当成缓冲区做匹配。</p>
+<p>下面的的示例会把原文本中的偶数行纳入奇数行匹配，而s只匹配并替换一次，所以，就成了下面的结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;N;s/my/your/&apos; pets.txt</span><br><span class="line">This is your cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line">This is your dog</span><br><span class="line">  my dog&apos;s name is frank</span><br><span class="line">This is your fish</span><br><span class="line">  my fish&apos;s name is george</span><br><span class="line">This is your goat</span><br><span class="line">  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，原来的文件成了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This is my cat\n  my cat&apos;s name is betty</span><br><span class="line">This is my dog\n  my dog&apos;s name is frank</span><br><span class="line">This is my fish\n  my fish&apos;s name is george</span><br><span class="line">This is my goat\n  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>这样一来，下面的例子你就明白了，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;N;s/\n/,/&apos; pets.txt</span><br><span class="line">This is my cat,  my cat&apos;s name is betty</span><br><span class="line">This is my dog,  my dog&apos;s name is frank</span><br><span class="line">This is my fish,  my fish&apos;s name is george</span><br><span class="line">This is my goat,  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<h3 id="a命令和i命令"><a href="#a命令和i命令" class="headerlink" title="a命令和i命令"></a>a命令和i命令</h3><p>a命令就是append， i命令就是insert，它们是用来添加行的。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 其中的1i表明，其要在第1行前插入一行（insert）</span><br><span class="line">$ sed &quot;1 i This is my monkey, my monkey&apos;s name is wukong&quot; my.txt</span><br><span class="line">This is my monkey, my monkey&apos;s name is wukong</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br><span class="line"></span><br><span class="line"># 其中的1a表明，其要在最后一行后追加一行（append）</span><br><span class="line">$ sed &quot;$ a This is my monkey, my monkey&apos;s name is wukong&quot; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my monkey, my monkey&apos;s name is wukong</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>我们可以运用匹配来添加文本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 注意其中的/fish/a，这意思是匹配到/fish/后就追加一行</span><br><span class="line">$ sed &quot;/fish/a This is my monkey, my monkey&apos;s name is wukong&quot; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my monkey, my monkey&apos;s name is wukong</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<p>下面这个例子是对每一行都挺插入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sed &quot;/my/a ----&quot; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">----</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">----</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">----</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br><span class="line">----</span><br></pre></td></tr></table></figure>
+
+<h3 id="c命令"><a href="#c命令" class="headerlink" title="c命令"></a>c命令</h3><p>c 命令是替换匹配行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sed &quot;2 c This is my monkey, my monkey&apos;s name is wukong&quot; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my monkey, my monkey&apos;s name is wukong</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br><span class="line"></span><br><span class="line">$ sed &quot;/fish/c This is my monkey, my monkey&apos;s name is wukong&quot; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my monkey, my monkey&apos;s name is wukong</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<h3 id="d命令"><a href="#d命令" class="headerlink" title="d命令"></a>d命令</h3><p>删除匹配行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;/fish/d&apos; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br><span class="line">$ sed &apos;2d&apos; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br><span class="line">$ sed &apos;2,$d&apos; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br></pre></td></tr></table></figure>
+
+<h3 id="p命令"><a href="#p命令" class="headerlink" title="p命令"></a>p命令</h3><p>打印命令</p>
+<p>你可以把这个命令当成grep式的命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"># 匹配fish并输出，可以看到fish的那一行被打了两遍，</span><br><span class="line"># 这是因为sed处理时会把处理的信息输出</span><br><span class="line">$ sed &apos;/fish/p&apos; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line">This is my goat, my goat&apos;s name is adam</span><br><span class="line"></span><br><span class="line"># 使用n参数就好了</span><br><span class="line">$ sed -n &apos;/fish/p&apos; my.txt</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line"></span><br><span class="line"># 从一个模式到另一个模式</span><br><span class="line">$ sed -n &apos;/dog/,/fish/p&apos; my.txt</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br><span class="line"></span><br><span class="line">#从第一行打印到匹配fish成功的那一行</span><br><span class="line">$ sed -n &apos;1,/fish/p&apos; my.txt</span><br><span class="line">This is my cat, my cat&apos;s name is betty</span><br><span class="line">This is my dog, my dog&apos;s name is frank</span><br><span class="line">This is my fish, my fish&apos;s name is george</span><br></pre></td></tr></table></figure>
+
+<h2 id="几个知识点"><a href="#几个知识点" class="headerlink" title="几个知识点"></a>几个知识点</h2><p>好了，下面我们要介绍四个sed的基本知识点：</p>
+<h3 id="Pattern-Space"><a href="#Pattern-Space" class="headerlink" title="Pattern Space"></a>Pattern Space</h3><p>第零个是关于-n参数的，大家也许没看懂，没关系，我们来看一下sed处理文本的伪代码，并了解一下Pattern Space的概念：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">foreach line in file &#123;</span><br><span class="line">    //放入把行Pattern_Space</span><br><span class="line">    Pattern_Space &lt;= line;</span><br><span class="line"></span><br><span class="line">    // 对每个pattern space执行sed命令</span><br><span class="line">    Pattern_Space &lt;= EXEC(sed_cmd, Pattern_Space);</span><br><span class="line"></span><br><span class="line">    // 如果没有指定 -n 则输出处理后的Pattern_Space</span><br><span class="line">    if (sed option hasn&apos;t &quot;-n&quot;)  &#123;</span><br><span class="line">       print Pattern_Space</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Address"><a href="#Address" class="headerlink" title="Address"></a>Address</h3><p>第一个是关于address，几乎上述所有的命令都是这样的（注：其中的!表示匹配成功后是否执行命令）</p>
+<p>[address[,address]][!]{cmd}</p>
+<p>address可以是一个数字，也可以是一个模式，你可以通过逗号要分隔两个address 表示两个address的区间，参执行命令cmd，伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">bool bexec = false</span><br><span class="line">foreach line in file &#123;</span><br><span class="line">    if ( match(address1) )&#123;</span><br><span class="line">        bexec = true;</span><br><span class="line">    &#125;</span><br><span class="line">    if ( bexec == true) &#123;</span><br><span class="line">        EXEC(sed_cmd);</span><br><span class="line">    &#125;</span><br><span class="line">    if ( match (address2) ) &#123;</span><br><span class="line">        bexec = false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于address可以使用相对位置，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 其中的+3表示后面连续3行</span><br><span class="line">$ sed &apos;/dog/,+3s/^/# /g&apos; pets.txt</span><br><span class="line">This is my cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line"># This is my dog</span><br><span class="line">#   my dog&apos;s name is frank</span><br><span class="line"># This is my fish</span><br><span class="line">#   my fish&apos;s name is george</span><br><span class="line">This is my goat</span><br><span class="line">  my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<h3 id="命令打包"><a href="#命令打包" class="headerlink" title="命令打包"></a>命令打包</h3><p>第二个是cmd可以是多个，它们可以用分号分开，可以用大括号括起来作为嵌套命令。下面是几个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">$ cat pets.txt</span><br><span class="line">This is my cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line">This is my dog</span><br><span class="line">  my dog&apos;s name is frank</span><br><span class="line">This is my fish</span><br><span class="line">  my fish&apos;s name is george</span><br><span class="line">This is my goat</span><br><span class="line">  my goat&apos;s name is adam</span><br><span class="line"></span><br><span class="line"># 对3行到第6行，执行命令/This/d</span><br><span class="line">$ sed &apos;3,6 &#123;/This/d&#125;&apos; pets.txt</span><br><span class="line">This is my cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line">  my dog&apos;s name is frank</span><br><span class="line">  my fish&apos;s name is george</span><br><span class="line">This is my goat</span><br><span class="line">  my goat&apos;s name is adam</span><br><span class="line"></span><br><span class="line"># 对3行到第6行，匹配/This/成功后，再匹配/fish/，成功后执行d命令</span><br><span class="line">$ sed &apos;3,6 &#123;/This/&#123;/fish/d&#125;&#125;&apos; pets.txt</span><br><span class="line">This is my cat</span><br><span class="line">  my cat&apos;s name is betty</span><br><span class="line">This is my dog</span><br><span class="line">  my dog&apos;s name is frank</span><br><span class="line">  my fish&apos;s name is george</span><br><span class="line">This is my goat</span><br><span class="line">  my goat&apos;s name is adam</span><br><span class="line"></span><br><span class="line"># 从第一行到最后一行，如果匹配到This，则删除之；如果前面有空格，则去除空格</span><br><span class="line">$ sed &apos;1,$&#123;/This/d;s/^ *//g&#125;&apos; pets.txt</span><br><span class="line">my cat&apos;s name is betty</span><br><span class="line">my dog&apos;s name is frank</span><br><span class="line">my fish&apos;s name is george</span><br><span class="line">my goat&apos;s name is adam</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hold-Space"><a href="#Hold-Space" class="headerlink" title="Hold Space"></a>Hold Space</h3><p>第三个我们再来看一下 Hold Space</p>
+<p>接下来，我们需要了解一下Hold Space的概念，我们先来看四个命令：</p>
+<p>g： 将hold space中的内容拷贝到pattern space中，原来pattern space里的内容清除<br>G： 将hold space中的内容append到pattern space\n后<br>h： 将pattern space中的内容拷贝到hold space中，原来的hold space里的内容被清除<br>H： 将pattern space中的内容append到hold space\n后<br>x： 交换pattern space和hold space的内容</p>
+<p>这些命令有什么用？我们来看两个示例吧，用到的示例文件是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat t.txt</span><br><span class="line">one</span><br><span class="line">two</span><br><span class="line">three</span><br></pre></td></tr></table></figure>
+
+<p>第一个示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;H;g&apos; t.txt</span><br><span class="line">one</span><br><span class="line">one</span><br><span class="line">two</span><br><span class="line">one</span><br><span class="line">two</span><br><span class="line">three</span><br></pre></td></tr></table></figure>
+
+<p>是不是有点没看懂，我作个图你就看懂了。</p>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/02/sed_demo_00.jpg"></p>
+<p>第二个示例，反序了一个文件的行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;1!G;h;$!d&apos; t.txt</span><br><span class="line">three</span><br><span class="line">two</span><br><span class="line">one</span><br></pre></td></tr></table></figure>
+
+<p>其中的 ‘1!G;h;$!d’ 可拆解为三个命令</p>
+<ul>
+<li>1!G —— 只有第一行不执行G命令，将hold space中的内容append回到pattern space</li>
+<li>h —— 第一行都执行h命令，将pattern space中的内容拷贝到hold space中</li>
+<li>$!d —— 除了最后一行不执行d命令，其它行都执行d命令，删除当前行</li>
+</ul>
+<p>这个执行序列很难理解，做个图如下大家就明白了：</p>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/02/sed_demo.jpg"></p>
+<p>就先说这么多吧，希望对大家有用。</p>
+<p>转自：<a href="https://coolshell.cn/articles/9104.html" target="_blank" rel="noopener">https://coolshell.cn/articles/9104.html</a></p>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/linux/">linux</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+          <li>
+            
+            	<a href="阮" target="_blank" title="0">0</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="一" target="_blank" title="1">1</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="峰" target="_blank" title="2">2</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="的" target="_blank" title="3">3</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="网" target="_blank" title="4">4</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="络" target="_blank" title="5">5</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="日" target="_blank" title="6">6</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="志" target="_blank" title="7">7</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="8">8</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="9">9</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="10">10</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="11">11</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="12">12</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="13">13</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="14">14</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="15">15</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="16">16</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="17">17</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="18">18</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="19">19</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="20">20</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="21">21</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="u" target="_blank" title="22">22</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="23">23</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="24">24</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="y" target="_blank" title="25">25</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="26">26</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="f" target="_blank" title="27">27</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="28">28</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="29">29</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="30">30</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="31">31</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="32">32</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="33">33</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="m" target="_blank" title="34">34</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="35">35</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="b" target="_blank" title="36">36</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="37">37</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="38">38</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="39">39</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="40">40</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="陈" target="_blank" title="41">41</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="浩" target="_blank" title="42">42</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="的" target="_blank" title="43">43</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="技" target="_blank" title="44">44</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="术" target="_blank" title="45">45</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="博" target="_blank" title="46">46</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="客" target="_blank" title="47">47</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="48">48</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="49">49</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="50">50</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="51">51</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="52">52</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="53">53</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="54">54</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="55">55</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="56">56</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="57">57</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="58">58</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="59">59</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="60">60</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="61">61</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="62">62</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="63">63</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="64">64</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="65">65</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="66">66</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="67">67</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="68">68</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="69">69</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="70">70</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="云" target="_blank" title="71">71</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="风" target="_blank" title="72">72</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="的" target="_blank" title="73">73</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="技" target="_blank" title="74">74</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="术" target="_blank" title="75">75</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="博" target="_blank" title="76">76</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="客" target="_blank" title="77">77</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="78">78</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="79">79</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="80">80</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="81">81</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="82">82</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="83">83</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="84">84</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="85">85</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="86">86</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="87">87</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="b" target="_blank" title="88">88</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="89">89</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="90">90</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="91">91</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="92">92</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="93">93</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="94">94</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="d" target="_blank" title="95">95</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="96">96</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="97">97</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="98">98</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="99">99</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="100">100</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="101">101</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="102">102</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="103">103</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="104">104</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="m" target="_blank" title="105">105</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="106">106</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="菜" target="_blank" title="107">107</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="鸟" target="_blank" title="108">108</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="教" target="_blank" title="109">109</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="程" target="_blank" title="110">110</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="111">111</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="112">112</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="113">113</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="114">114</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="115">115</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="116">116</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="117">117</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="118">118</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="119">119</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="120">120</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="121">121</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="122">122</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="123">123</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="124">124</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="125">125</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="u" target="_blank" title="126">126</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="127">127</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="128">128</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="129">129</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="b" target="_blank" title="130">130</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="131">131</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="132">132</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="133">133</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="m" target="_blank" title="134">134</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="135">135</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="敏" target="_blank" title="136">136</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="捷" target="_blank" title="137">137</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="管" target="_blank" title="138">138</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="理" target="_blank" title="139">139</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="工" target="_blank" title="140">140</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="具" target="_blank" title="141">141</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="142">142</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="143">143</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="144">144</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="145">145</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="146">146</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="147">147</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="148">148</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="149">149</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="150">150</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="151">151</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="152">152</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="153">153</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="154">154</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="155">155</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="156">156</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="157">157</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="158">158</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="159">159</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="160">160</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="代" target="_blank" title="161">161</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="码" target="_blank" title="162">162</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="托" target="_blank" title="163">163</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="管" target="_blank" title="164">164</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="平" target="_blank" title="165">165</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="台" target="_blank" title="166">166</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="167">167</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="168">168</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="169">169</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="170">170</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="171">171</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="172">172</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="173">173</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="174">174</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="175">175</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="176">176</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="177">177</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="178">178</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="179">179</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="180">180</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="181">181</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="182">182</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="183">183</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="184">184</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="185">185</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="持" target="_blank" title="186">186</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="续" target="_blank" title="187">187</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="交" target="_blank" title="188">188</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="付" target="_blank" title="189">189</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="平" target="_blank" title="190">190</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="台" target="_blank" title="191">191</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="192">192</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="193">193</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="194">194</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="195">195</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="196">196</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="197">197</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="198">198</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="199">199</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="200">200</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="201">201</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="d" target="_blank" title="202">202</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="203">203</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="204">204</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="205">205</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="206">206</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="207">207</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="208">208</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="209">209</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="210">210</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="接" target="_blank" title="211">211</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="口" target="_blank" title="212">212</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="管" target="_blank" title="213">213</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="理" target="_blank" title="214">214</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="平" target="_blank" title="215">215</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="台" target="_blank" title="216">216</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="217">217</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="218">218</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="219">219</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="220">220</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="221">221</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="222">222</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="223">223</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="224">224</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="225">225</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="226">226</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="227">227</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="228">228</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="229">229</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="230">230</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="231">231</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="232">232</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="233">233</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="f" target="_blank" title="234">234</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="235">235</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="x" target="_blank" title="236">236</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="237">237</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="238">238</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="239">239</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="240">240</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="在" target="_blank" title="241">241</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="线" target="_blank" title="242">242</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="绘" target="_blank" title="243">243</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="图" target="_blank" title="244">244</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="245">245</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="246">246</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="247">247</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="248">248</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="249">249</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="250">250</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="251">251</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="252">252</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="253">253</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="254">254</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="255">255</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="256">256</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="257">257</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="258">258</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="d" target="_blank" title="259">259</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="260">260</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="261">261</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="262">262</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="263">263</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="264">264</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="265">265</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="266">266</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="知" target="_blank" title="267">267</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="识" target="_blank" title="268">268</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="分" target="_blank" title="269">269</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="享" target="_blank" title="270">270</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="271">271</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="272">272</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="273">273</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="274">274</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="275">275</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="276">276</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="277">277</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="278">278</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="279">279</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="280">280</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="281">281</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="282">282</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="283">283</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="u" target="_blank" title="284">284</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="285">285</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="286">286</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="287">287</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="288">288</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="289">289</a>
+            
+          </li>
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+
