@@ -1,0 +1,1895 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>转：C 的回归 › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="周末出差，去另一个城市给公司的一个项目解决点问题。回程去机场的路上，我用手机上 google reader 打发时间。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="转：C 的回归">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">转：C 的回归</h1>
+  
+
+      
+        <time datetime="2016-07-23T08:00:34.000Z">2016-07-23</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>周末出差，去另一个城市给公司的一个项目解决点问题。回程去机场的路上，我用手机上 google reader 打发时间。<a id="more"></a>第一眼就看到孟岩大大新的一篇：<a href="http://blog.csdn.net/myan/archive/2007/09/08/1777230.aspx" target="_blank" rel="noopener">Linux之父话糙理不糙</a> 。主题是 C 与 C++ 的语言之争。转到刘江的 blog 下读完了 <a href="http://blog.csdn.net/turingbook/archive/2007/09/07/1775488.aspx" target="_blank" rel="noopener">Linux之父炮轰C++：糟糕程序员的垃圾语言</a> 大呼过瘾。立刻把链接短信发给了几个朋友。</p>
+<p>语言之争永远是火药味十足的话题。尤其是 C 和 C++ 的目标市场又有很高的重合性，C++ 程序员往往对C++ 其有着宗教般的虔诚。我想，今天我在自己的 blog 上继续这个战争，一定会换来更多的骂名。只不过这次 Linus 几句话真是说到我心坎里去了，不喊出来会憋坏的 :D</p>
+<p>首先，给不熟悉我的朋友做一个技术背景的自我介绍：</p>
+<p>我不是一个 Linux 的 fans ，虽然我今天对 Windows 也没有什么好感，但我的大部分工作还是在 WIndows 上做应用软件开发的，对 Windows 还算熟悉。现在我也用非 Windows 的系统，但那是一台 FreeBSD 的机器，不是 Linux 。</p>
+<p>我自认为对 C++ 相当熟悉，精读过市面上能买到的关于 C++ 的大部分书籍，像 D&amp;E of C++ 这样的经典还读了不只一遍。用 C++ 写过至少数十万行代码，阅读过 STL 的大部分源码，和 ACE / Boost 的一小部分。</p>
+<p>曾经我是 C++ 的忠实粉丝，如果谁说 C++ 的不是，要么会选择跟他辩论到底，要么会对此人不屑一顾。</p>
+<p>还有一点我认为非常重要：我第一次爱上 C++ 是 15 年前（1992 年），然后对其慢慢冷淡，回归 C 的怀抱。而到了 2000 年，我又一次爱上 C++ 。也就是说，从热爱 C++ 到否定它，在我的个人经历中，有过两次。不排除未来有第三次的可能，但这一点足可说明，否定 C++ 是出于一种理性的判断，而不是一种冲动。</p>
+<p>写上这些，并非是想倚老卖老。我知道，想骂我的 C++ 程序员，更讨厌有人倚老卖老的数落 C++ 的不是。而且论资格，我顶多及的上 Linus 大大的一个零头，既然有老人在前撑腰，下面说话的底气就可以足一些了 :)</p>
+<p>C 是 C++ 的一个子集（从 C99 开始已经不是了），用 C 能写出来的代码，C++ 一样可以写出来，然后可以完成的更好。</p>
+<p>这是新手们自以为是的攻击武器。Linus 用了一个很恰当的理由做出反击：“你当然可以用任何语言编写糟糕的代码。但是，有些语言，尤其是带有一些心智（mental）包袱的语言本身就非常糟糕。”</p>
+<p>没错，我最想说的就是这个。C++ 就是一个“带有一些心智（mental）包袱的语言”。这对软件设计的影响非常之大，没有经年的软件开发实践很难理解这一点。</p>
+<p>从这一点上展开，把 ASM 和 C 比较的问题和 C 与 C++ 的比较相提并论就没有意义了。</p>
+<p>接下来要找到的问题要点就是，C++ 比 C 多出来那些东西后，真的会带来心智包袱吗？这个问题不好回答。单纯从 C++ 语言特性的繁杂导致的不易掌握和误用这些角度是很难说服我自己的，更别说去说服那些比我聪明的多，刻苦的多的 C++ 程序员们。我自认为对所谓 C++ 的高级特性掌握的还是不错的，并运用在诸多实际项目中。他们相当有趣，在某种程度上也非常的有效。代码可以获得相当高的执行效率，并可以缩短编码的时间（更少的键击数），完成他们也有很大的成就感。</p>
+<p>好了，让我再引用 Linus 的一句说到我心坎里的话。“字符串/内存管理根本无关紧要。这不是重要的部分，而且也不复杂。唯一真正重要的部分是设计。”</p>
+<p>设计！这才是重中之重。</p>
+<p>如果要说，这最近 10 年的程序员生涯我学会了什么？我认为，我比以前能设计出更好的代码了。能更准确的把握设计的坏味道。而对编程语言的掌握，对操作系统的熟悉，工作相关知识的了解等等。那些只是自然而然发生的事，那些是知识的积累，而非能力的提高。</p>
+<p>“抽象”，“面向对象”，“设计模式”，这些重要吗？重要。对软件开发相当重要。但重要不是必要，执迷于“抽象”会使你离目标越来越远。当我们一次又一次的提取出事物的共性，建立起抽象层的时候，我们可能丢弃了真实。C++ 继承了 C 语言中“信任程序员”这一设计哲学，致力于让程序员在建立抽象层时，可以不做出额外的消耗。他的解决方式是提供尽可能多的语言工具和设计选择，任何一个都允许你在不用的时候不带来额外的性能损失。</p>
+<p>这是一个美好的愿景：C++ 程序员指望可以建立强大的可复用的抽象层，面对世界上一切的具体应用。同时 CPU 执行序列在穿越这个坚厚的抽象层的过程中，居然可以以光速通过（通过抽象层没有额外的执行效率付出）。为此：C++ 社区创造了 STL ，创造了 Boost 。它们共同的关键词是：效率、复用。</p>
+<p>再往上呢？另一个问题产生了：“——低效的抽象编程模型，可能在两年之后你会注意到有些抽象效果不怎么样，但是所有代码已经依赖于围绕它设计的‘漂亮’对象模型了，如果不重写应用程序，就无法改正。”这一段依旧是 Linus 语，我不停的引用，是因为我明白这一点，但是不能表达的更清楚。</p>
+<p>使用 C++ 的程序员不断的强调复用性，却不断的需要重写代码。如果一段代码可以不被重写，那多半是因为对重写工程量的妥协。是的，其实我们可以用 C++ 的各种特性写出更好，更漂亮，更高效的代码。两年前的框架不那么完美，不是 C++ 语言的错，是两年前的我能力有限的缘故。但是因为需要改写的是设计框架，这意味着我们必须跟着变更已经完成的功能模块，或是加上桥接层。</p>
+<p>的确，STL 和 Boost 都是世界顶尖程序员完成的。代码质量非常的高（当然，我对 Boost 的一部分持保留意见）。我不拿编译器兼容性和可移植性或是编译速度说事，虽然这些的确是现实问题，但不足以成为反对 C++ 基础类库的理由。</p>
+<p>好好的用好 C++ 当然得用好 STL ，Boost 也应该认真考察一下。能够仔细读一下源码更好。合格的 C++ 程序员应该做这个。否则作为 C++ 程序员你就违背了 C++ 语言的设计哲学：C++ 信任了你，你就该对的起这种信任，搞清楚你写的每一行代码背后，机器都去干了什么。</p>
+<p>但是，STL 过于庞大了，Boost 更加是。我不是抱怨阅读和学习它们的源码的难度和需要的时间和精力。正相反，我在学习它们的过程中充满了乐趣和感激之情。高手前辈透过这些高质量的代码教会了我很多东西。我隐隐担心的是，这么庞大的代码，它的设计不可能是永远正确的。两年之后，他们的设计肯定依旧正确，再两年还是的。但是我几乎敢肯定，放之更长远的时间来看，绝对会在某些设计领域发现其不是最佳的选择。到那一天，我们会选择修改吗？我想 C++ 社区会被迫选择妥协。但是，C++ 程序员心中会充满痛苦。</p>
+<p>C 在这个问题上的抉择是不一样的。在效率问题上，C 程序里最令人担心的是函数调用的消耗。C++ 程序员最津津乐道的案例就是 std::sort 全面击败了 C 库中的 qsort 。C 语言的失败正在于多余的函数调用消耗。</p>
+<p>但是，从一开始 C 就选择了承认函数调用的消耗，而这一点几乎是唯一。付出了这个代价后，设计失误导致的效率下降问题几乎总可以避免。C 和 C++ 都可以选择重写设计失败的部分，但不一样的是， C 程序员几乎可以不考虑妥协的问题。同样的是考虑极端效率的语言，C 语言坦然面对缺陷，才是真正的符合了 KISS 原则。</p>
+<p>我对这个问题的见解，可以再引用 Linus 的一段话作为收场。“如果你想用更花哨的语言，C++绝对是最糟糕的选择。如果想要真正的高级特性，那就选择有垃圾回收或者好的系统集成的，而不是既缺乏C的简约（sparseness）又缺乏C的直接而且没有重要概念的高层绑定（high-level bindings to important concepts）的东西。”。这是我最近几年来一直坚持的观点：<a href="http://blog.codingnow.com/2007/07/cpp_0x_gc.html" target="_blank" rel="noopener">C++ 的发展，一定要补充对 GC 支持所需要的特性</a>。</p>
+<p>强调一下，我并不讨厌 C++ :) 。 C++ 的粉丝们可以随便骂我，但是不要带上阶级仇恨。</p>
+<p>ps. 最近两年多，我在做一个游戏引擎的项目。这个项目现在是第三个版本了。第一个版本是用 C++ 实现的，但是没有用任何已存在的类库（包括 STL）。在第二个版本中，我去掉了所有使用 C++ 高级特性实现的部分，只使用了 C++ 基本特性实现所有。今年重写的第三个版本，全部换成 C 代码了。这个项目的发展，可以反应出我个人对 C/C++ 理解的心路过程。<br>&lt;完&gt;</p>
+<p>原文地址：<a href="http://blog.codingnow.com/2007/09/c_vs_cplusplus.html" target="_blank" rel="noopener">http://blog.codingnow.com/2007/09/c_vs_cplusplus.html</a></p>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/c/">c</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+          <li>
+            
+            	<a href="阮" target="_blank" title="0">0</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="一" target="_blank" title="1">1</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="峰" target="_blank" title="2">2</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="的" target="_blank" title="3">3</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="网" target="_blank" title="4">4</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="络" target="_blank" title="5">5</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="日" target="_blank" title="6">6</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="志" target="_blank" title="7">7</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="8">8</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="9">9</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="10">10</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="11">11</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="12">12</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="13">13</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="14">14</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="15">15</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="16">16</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="17">17</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="18">18</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="19">19</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="20">20</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="u" target="_blank" title="21">21</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="22">22</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="23">23</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="y" target="_blank" title="24">24</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="25">25</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="f" target="_blank" title="26">26</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="27">27</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="28">28</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="29">29</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="30">30</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="31">31</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="32">32</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="m" target="_blank" title="33">33</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="34">34</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="b" target="_blank" title="35">35</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="36">36</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="37">37</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="38">38</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="39">39</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="陈" target="_blank" title="40">40</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="浩" target="_blank" title="41">41</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="的" target="_blank" title="42">42</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="技" target="_blank" title="43">43</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="术" target="_blank" title="44">44</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="博" target="_blank" title="45">45</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="客" target="_blank" title="46">46</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="47">47</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="48">48</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="49">49</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="50">50</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="51">51</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="52">52</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="53">53</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="54">54</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="55">55</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="56">56</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="57">57</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="58">58</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="59">59</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="60">60</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="61">61</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="62">62</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="63">63</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="64">64</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="65">65</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="66">66</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="67">67</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="68">68</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="云" target="_blank" title="69">69</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="风" target="_blank" title="70">70</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="的" target="_blank" title="71">71</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="技" target="_blank" title="72">72</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="术" target="_blank" title="73">73</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="博" target="_blank" title="74">74</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="客" target="_blank" title="75">75</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="76">76</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="77">77</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="78">78</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="79">79</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="80">80</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="81">81</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="82">82</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="83">83</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="84">84</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="b" target="_blank" title="85">85</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="l" target="_blank" title="86">86</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="87">87</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="88">88</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="89">89</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="90">90</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="91">91</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="d" target="_blank" title="92">92</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="93">93</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="94">94</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="95">95</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="96">96</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="97">97</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="98">98</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="99">99</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="100">100</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="101">101</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="m" target="_blank" title="102">102</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="103">103</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="菜" target="_blank" title="104">104</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="鸟" target="_blank" title="105">105</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="教" target="_blank" title="106">106</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="程" target="_blank" title="107">107</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="108">108</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="109">109</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="110">110</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="111">111</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="112">112</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="113">113</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="114">114</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="115">115</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="116">116</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="117">117</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="118">118</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="119">119</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="120">120</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="121">121</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="u" target="_blank" title="122">122</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="123">123</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="124">124</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="125">125</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="b" target="_blank" title="126">126</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="127">127</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="128">128</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="129">129</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="m" target="_blank" title="130">130</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="131">131</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="敏" target="_blank" title="132">132</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="捷" target="_blank" title="133">133</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="管" target="_blank" title="134">134</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="理" target="_blank" title="135">135</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="工" target="_blank" title="136">136</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="具" target="_blank" title="137">137</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="138">138</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="139">139</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="140">140</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="141">141</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="142">142</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="143">143</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="144">144</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="145">145</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="146">146</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="147">147</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="148">148</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="149">149</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="150">150</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="151">151</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="152">152</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="153">153</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="154">154</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="155">155</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="代" target="_blank" title="156">156</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="码" target="_blank" title="157">157</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="托" target="_blank" title="158">158</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="管" target="_blank" title="159">159</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="平" target="_blank" title="160">160</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="台" target="_blank" title="161">161</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="162">162</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="163">163</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="164">164</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="165">165</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="166">166</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="167">167</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="168">168</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="169">169</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="170">170</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="171">171</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="172">172</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="173">173</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="174">174</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="175">175</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="176">176</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="177">177</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="178">178</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="179">179</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="持" target="_blank" title="180">180</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="续" target="_blank" title="181">181</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="交" target="_blank" title="182">182</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="付" target="_blank" title="183">183</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="平" target="_blank" title="184">184</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="台" target="_blank" title="185">185</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="186">186</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="187">187</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="188">188</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="189">189</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="190">190</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="191">191</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="192">192</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="193">193</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="194">194</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="d" target="_blank" title="195">195</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="196">196</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="197">197</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="198">198</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="e" target="_blank" title="199">199</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="200">200</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="201">201</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="202">202</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="203">203</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="接" target="_blank" title="204">204</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="口" target="_blank" title="205">205</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="管" target="_blank" title="206">206</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="理" target="_blank" title="207">207</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="平" target="_blank" title="208">208</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="台" target="_blank" title="209">209</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="210">210</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="211">211</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="212">212</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="213">213</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="214">214</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="215">215</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="216">216</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="217">217</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="218">218</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="219">219</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="220">220</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="221">221</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="222">222</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="223">223</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="224">224</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="225">225</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="f" target="_blank" title="226">226</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="227">227</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="x" target="_blank" title="228">228</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="229">229</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="c" target="_blank" title="230">230</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="n" target="_blank" title="231">231</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="232">232</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="在" target="_blank" title="233">233</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="线" target="_blank" title="234">234</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="绘" target="_blank" title="235">235</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="图" target="_blank" title="236">236</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="237">237</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="238">238</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="239">239</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="240">240</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="241">241</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="242">242</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="243">243</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="244">244</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="245">245</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="246">246</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="247">247</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="248">248</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="249">249</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="d" target="_blank" title="250">250</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="r" target="_blank" title="251">251</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="a" target="_blank" title="252">252</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="w" target="_blank" title="253">253</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="254">254</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="255">255</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="256">256</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=" " target="_blank" title="257">257</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="知" target="_blank" title="258">258</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="识" target="_blank" title="259">259</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="分" target="_blank" title="260">260</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="享" target="_blank" title="261">261</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="：" target="_blank" title="262">262</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="263">263</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="264">264</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="t" target="_blank" title="265">265</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="p" target="_blank" title="266">266</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="s" target="_blank" title="267">267</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href=":" target="_blank" title="268">268</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="269">269</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="/" target="_blank" title="270">270</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="271">271</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="272">272</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="h" target="_blank" title="273">273</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="u" target="_blank" title="274">274</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="g" target="_blank" title="275">275</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="276">276</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="." target="_blank" title="277">277</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="i" target="_blank" title="278">278</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="o" target="_blank" title="279">279</a>
+            
+          </li>
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+
