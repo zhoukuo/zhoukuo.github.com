@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>转-AWK简明教程 › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="我估计这些80后的年轻朋友可能对awk/sed这类上古神器有点陌生了，所以需要我这个老家伙来炒炒冷饭。况且，AWK是贝尔实验室1977年搞出来的文本出现神器，今年是蛇年，是AWK的本命年，而且年纪和我相仿，所以非常有必要为他写篇文章。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="转-AWK简明教程">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">转-AWK简明教程</h1>
+  
+
+      
+        <time datetime="2020-04-19T08:13:18.000Z">2020-04-19</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>我估计这些80后的年轻朋友可能对awk/sed这类上古神器有点陌生了，所以需要我这个老家伙来炒炒冷饭。况且，AWK是贝尔实验室1977年搞出来的文本出现神器，今年是蛇年，是AWK的本命年，而且年纪和我相仿，所以非常有必要为他写篇文章。<a id="more"></a></p>
+<p>之所以叫AWK是因为其取了三位创始人 Alfred Aho，Peter Weinberger, 和 Brian Kernighan 的Family Name的首字符。要学AWK，就得提一提AWK的一本相当经典的书《The AWK Programming Language》，它在豆瓣上的评分是9.4分！在亚马逊上居然卖1022.30元。</p>
+<h2 id="起步上台"><a href="#起步上台" class="headerlink" title="起步上台"></a>起步上台</h2><p>我从netstat命令中提取了如下信息作为用例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ cat netstat.txt</span><br><span class="line">Proto Recv-Q Send-Q Local-Address          Foreign-Address             State</span><br><span class="line">tcp        0      0 0.0.0.0:3306           0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 0.0.0.0:80             0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 127.0.0.1:9000         0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 coolshell.cn:80        124.205.5.146:18245         TIME_WAIT</span><br><span class="line">tcp        0      0 coolshell.cn:80        61.140.101.185:37538        FIN_WAIT2</span><br><span class="line">tcp        0      0 coolshell.cn:80        110.194.134.189:1032        ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49809       ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        116.234.127.77:11502        FIN_WAIT2</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49829       ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        183.60.215.36:36970         TIME_WAIT</span><br><span class="line">tcp        0   4166 coolshell.cn:80        61.148.242.38:30901         ESTABLISHED</span><br><span class="line">tcp        0      1 coolshell.cn:80        124.152.181.209:26825       FIN_WAIT1</span><br><span class="line">tcp        0      0 coolshell.cn:80        110.194.134.189:4796        ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        183.60.212.163:51082        TIME_WAIT</span><br><span class="line">tcp        0      1 coolshell.cn:80        208.115.113.92:50601        LAST_ACK</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49840       ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        117.136.20.85:50025         FIN_WAIT2</span><br><span class="line">tcp        0      0 :::22                  :::*                        LISTEN</span><br></pre></td></tr></table></figure>
+
+<p>下面是最简单最常用的awk示例，其输出第1列和第4例，</p>
+<ul>
+<li>其中单引号中的被大括号括着的就是awk的语句，注意，其只能被单引号包含。</li>
+<li>其中的$1..$n表示第几例。注：$0表示整个行。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;&#123;print $1, $4&#125;&apos; netstat.txt</span><br><span class="line">Proto Local-Address</span><br><span class="line">tcp 0.0.0.0:3306</span><br><span class="line">tcp 0.0.0.0:80</span><br><span class="line">tcp 127.0.0.1:9000</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp coolshell.cn:80</span><br><span class="line">tcp :::22</span><br></pre></td></tr></table></figure>
+
+<p>我们再来看看awk的格式化输出，和C语言的printf没什么两样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;&#123;printf &quot;%-8s %-8s %-8s %-18s %-22s %-15s\n&quot;,$1,$2,$3,$4,$5,$6&#125;&apos; netstat.txt</span><br><span class="line">Proto    Recv-Q   Send-Q   Local-Address      Foreign-Address        State</span><br><span class="line">tcp      0        0        0.0.0.0:3306       0.0.0.0:*              LISTEN</span><br><span class="line">tcp      0        0        0.0.0.0:80         0.0.0.0:*              LISTEN</span><br><span class="line">tcp      0        0        127.0.0.1:9000     0.0.0.0:*              LISTEN</span><br><span class="line">tcp      0        0        coolshell.cn:80    124.205.5.146:18245    TIME_WAIT</span><br><span class="line">tcp      0        0        coolshell.cn:80    61.140.101.185:37538   FIN_WAIT2</span><br><span class="line">tcp      0        0        coolshell.cn:80    110.194.134.189:1032   ESTABLISHED</span><br><span class="line">tcp      0        0        coolshell.cn:80    123.169.124.111:49809  ESTABLISHED</span><br><span class="line">tcp      0        0        coolshell.cn:80    116.234.127.77:11502   FIN_WAIT2</span><br><span class="line">tcp      0        0        coolshell.cn:80    123.169.124.111:49829  ESTABLISHED</span><br><span class="line">tcp      0        0        coolshell.cn:80    183.60.215.36:36970    TIME_WAIT</span><br><span class="line">tcp      0        4166     coolshell.cn:80    61.148.242.38:30901    ESTABLISHED</span><br><span class="line">tcp      0        1        coolshell.cn:80    124.152.181.209:26825  FIN_WAIT1</span><br><span class="line">tcp      0        0        coolshell.cn:80    110.194.134.189:4796   ESTABLISHED</span><br><span class="line">tcp      0        0        coolshell.cn:80    183.60.212.163:51082   TIME_WAIT</span><br><span class="line">tcp      0        1        coolshell.cn:80    208.115.113.92:50601   LAST_ACK</span><br><span class="line">tcp      0        0        coolshell.cn:80    123.169.124.111:49840  ESTABLISHED</span><br><span class="line">tcp      0        0        coolshell.cn:80    117.136.20.85:50025    FIN_WAIT2</span><br><span class="line">tcp      0        0        :::22              :::*                   LISTEN</span><br></pre></td></tr></table></figure>
+
+<h2 id="脱掉外套"><a href="#脱掉外套" class="headerlink" title="脱掉外套"></a>脱掉外套</h2><h3 id="过滤记录"><a href="#过滤记录" class="headerlink" title="过滤记录"></a>过滤记录</h3><p>我们再来看看如何过滤记录（下面过滤条件为：第三列的值为0 &amp;&amp; 第6列的值为LISTEN）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;$3==0 &amp;&amp; $6==&quot;LISTEN&quot; &apos; netstat.txt</span><br><span class="line">tcp        0      0 0.0.0.0:3306               0.0.0.0:*              LISTEN</span><br><span class="line">tcp        0      0 0.0.0.0:80                 0.0.0.0:*              LISTEN</span><br><span class="line">tcp        0      0 127.0.0.1:9000             0.0.0.0:*              LISTEN</span><br><span class="line">tcp        0      0 :::22                      :::*                   LISTEN</span><br></pre></td></tr></table></figure>
+
+<p>其中的“==”为比较运算符。其他比较运算符：!=, &gt;, &lt;, &gt;=, &lt;=</p>
+<p>我们来看看各种过滤记录的方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos; $3&gt;0 &#123;print $0&#125;&apos; netstat.txt</span><br><span class="line">Proto Recv-Q Send-Q Local-Address          Foreign-Address             State</span><br><span class="line">tcp        0   4166 coolshell.cn:80        61.148.242.38:30901         ESTABLISHED</span><br><span class="line">tcp        0      1 coolshell.cn:80        124.152.181.209:26825       FIN_WAIT1</span><br><span class="line">tcp        0      1 coolshell.cn:80        208.115.113.92:50601        LAST_ACK</span><br></pre></td></tr></table></figure>
+
+<p>如果我们需要表头的话，我们可以引入内建变量NR：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;$3==0 &amp;&amp; $6==&quot;LISTEN&quot; || NR==1 &apos; netstat.txt</span><br><span class="line">Proto Recv-Q Send-Q Local-Address          Foreign-Address             State</span><br><span class="line">tcp        0      0 0.0.0.0:3306           0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 0.0.0.0:80             0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 127.0.0.1:9000         0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 :::22                  :::*                        LISTEN</span><br></pre></td></tr></table></figure>
+
+<p>再加上格式化输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;$3==0 &amp;&amp; $6==&quot;LISTEN&quot; || NR==1 &#123;printf &quot;%-20s %-20s %s\n&quot;,$4,$5,$6&#125;&apos; netstat.txt</span><br><span class="line">Local-Address        Foreign-Address      State</span><br><span class="line">0.0.0.0:3306         0.0.0.0:*            LISTEN</span><br><span class="line">0.0.0.0:80           0.0.0.0:*            LISTEN</span><br><span class="line">127.0.0.1:9000       0.0.0.0:*            LISTEN</span><br><span class="line">:::22                :::*                 LISTEN</span><br></pre></td></tr></table></figure>
+
+<h3 id="内建变量"><a href="#内建变量" class="headerlink" title="内建变量"></a>内建变量</h3><p>说到了内建变量，我们可以来看看awk的一些内建变量：</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$0</td>
+<td>当前记录（这个变量中存放着整个行的内容）</td>
+</tr>
+<tr>
+<td>$1~$n</td>
+<td>当前记录的第n个字段，字段间由FS分隔</td>
+</tr>
+<tr>
+<td>FS</td>
+<td>输入字段分隔符 默认是空格或Tab</td>
+</tr>
+<tr>
+<td>NF</td>
+<td>当前记录中的字段个数，就是有多少列</td>
+</tr>
+<tr>
+<td>NR</td>
+<td>已经读出的记录数，就是行号，从1开始，如果有多个文件话，这个值也是不断累加中。</td>
+</tr>
+<tr>
+<td>FNR</td>
+<td>当前记录数，与NR不同的是，这个值会是各个文件自己的行号</td>
+</tr>
+<tr>
+<td>RS</td>
+<td>输入的记录分隔符， 默认为换行符</td>
+</tr>
+<tr>
+<td>OFS</td>
+<td>输出字段分隔符， 默认也是空格</td>
+</tr>
+<tr>
+<td>ORS</td>
+<td>输出的记录分隔符，默认为换行符</td>
+</tr>
+<tr>
+<td>FILENAME</td>
+<td>当前输入文件的名字</td>
+</tr>
+</tbody></table>
+<p>怎么使用呢，比如：我们如果要输出行号：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;$3==0 &amp;&amp; $6==&quot;ESTABLISHED&quot; || NR==1 &#123;printf &quot;%02s %s %-20s %-20s %s\n&quot;,NR, FNR, $4,$5,$6&#125;&apos; netstat.txt</span><br><span class="line">01 1 Local-Address        Foreign-Address      State</span><br><span class="line">07 7 coolshell.cn:80      110.194.134.189:1032 ESTABLISHED</span><br><span class="line">08 8 coolshell.cn:80      123.169.124.111:49809 ESTABLISHED</span><br><span class="line">10 10 coolshell.cn:80      123.169.124.111:49829 ESTABLISHED</span><br><span class="line">14 14 coolshell.cn:80      110.194.134.189:4796 ESTABLISHED</span><br><span class="line">17 17 coolshell.cn:80      123.169.124.111:49840 ESTABLISHED</span><br></pre></td></tr></table></figure>
+
+<h3 id="指定分隔符"><a href="#指定分隔符" class="headerlink" title="指定分隔符"></a>指定分隔符</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$  awk  &apos;BEGIN&#123;FS=&quot;:&quot;&#125; &#123;print $1,$3,$6&#125;&apos; /etc/passwd</span><br><span class="line">root 0 /root</span><br><span class="line">bin 1 /bin</span><br><span class="line">daemon 2 /sbin</span><br><span class="line">adm 3 /var/adm</span><br><span class="line">lp 4 /var/spool/lpd</span><br><span class="line">sync 5 /sbin</span><br><span class="line">shutdown 6 /sbin</span><br><span class="line">halt 7 /sbin</span><br></pre></td></tr></table></figure>
+
+<p>上面的命令也等价于：（-F的意思就是指定分隔符）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ awk  -F: &apos;&#123;print $1,$3,$6&#125;&apos; /etc/passwd</span><br></pre></td></tr></table></figure>
+
+<p>注：如果你要指定多个分隔符，你可以这样来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F &apos;[;:]&apos;</span><br></pre></td></tr></table></figure>
+
+<p>再来看一个以\t作为分隔符输出的例子（下面使用了/etc/passwd文件，这个文件是以:分隔的）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ awk  -F: &apos;&#123;print $1,$3,$6&#125;&apos; OFS=&quot;\t&quot; /etc/passwd</span><br><span class="line">root    0       /root</span><br><span class="line">bin     1       /bin</span><br><span class="line">daemon  2       /sbin</span><br><span class="line">adm     3       /var/adm</span><br><span class="line">lp      4       /var/spool/lpd</span><br><span class="line">sync    5       /sbin</span><br></pre></td></tr></table></figure>
+
+<h2 id="脱掉衬衫"><a href="#脱掉衬衫" class="headerlink" title="脱掉衬衫"></a>脱掉衬衫</h2><h3 id="字符串匹配"><a href="#字符串匹配" class="headerlink" title="字符串匹配"></a>字符串匹配</h3><p>我们再来看几个字符串匹配的示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;$6 ~ /FIN/ || NR==1 &#123;print NR,$4,$5,$6&#125;&apos; OFS=&quot;\t&quot; netstat.txt</span><br><span class="line">1       Local-Address   Foreign-Address State</span><br><span class="line">6       coolshell.cn:80 61.140.101.185:37538    FIN_WAIT2</span><br><span class="line">9       coolshell.cn:80 116.234.127.77:11502    FIN_WAIT2</span><br><span class="line">13      coolshell.cn:80 124.152.181.209:26825   FIN_WAIT1</span><br><span class="line">18      coolshell.cn:80 117.136.20.85:50025     FIN_WAIT2</span><br><span class="line"></span><br><span class="line">$ $ awk &apos;$6 ~ /WAIT/ || NR==1 &#123;print NR,$4,$5,$6&#125;&apos; OFS=&quot;\t&quot; netstat.txt</span><br><span class="line">1       Local-Address   Foreign-Address State</span><br><span class="line">5       coolshell.cn:80 124.205.5.146:18245     TIME_WAIT</span><br><span class="line">6       coolshell.cn:80 61.140.101.185:37538    FIN_WAIT2</span><br><span class="line">9       coolshell.cn:80 116.234.127.77:11502    FIN_WAIT2</span><br><span class="line">11      coolshell.cn:80 183.60.215.36:36970     TIME_WAIT</span><br><span class="line">13      coolshell.cn:80 124.152.181.209:26825   FIN_WAIT1</span><br><span class="line">15      coolshell.cn:80 183.60.212.163:51082    TIME_WAIT</span><br><span class="line">18      coolshell.cn:80 117.136.20.85:50025     FIN_WAIT2</span><br></pre></td></tr></table></figure>
+
+<p>上面的第一个示例匹配FIN状态， 第二个示例匹配WAIT字样的状态。其实 ~ 表示模式开始。/ /中是模式。这就是一个正则表达式的匹配。</p>
+<p>其实awk可以像grep一样的去匹配第一行，就像这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;/LISTEN/&apos; netstat.txt</span><br><span class="line">tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN</span><br><span class="line">tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN</span><br><span class="line">tcp        0      0 127.0.0.1:9000          0.0.0.0:*               LISTEN</span><br><span class="line">tcp        0      0 :::22                   :::*                    LISTEN</span><br></pre></td></tr></table></figure>
+
+<p>我们可以使用 “/FIN|TIME/” 来匹配 FIN 或者 TIME :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;$6 ~ /FIN|TIME/ || NR==1 &#123;print NR,$4,$5,$6&#125;&apos; OFS=&quot;\t&quot; netstat.txt</span><br><span class="line">1       Local-Address   Foreign-Address State</span><br><span class="line">5       coolshell.cn:80 124.205.5.146:18245     TIME_WAIT</span><br><span class="line">6       coolshell.cn:80 61.140.101.185:37538    FIN_WAIT2</span><br><span class="line">9       coolshell.cn:80 116.234.127.77:11502    FIN_WAIT2</span><br><span class="line">11      coolshell.cn:80 183.60.215.36:36970     TIME_WAIT</span><br><span class="line">13      coolshell.cn:80 124.152.181.209:26825   FIN_WAIT1</span><br><span class="line">15      coolshell.cn:80 183.60.212.163:51082    TIME_WAIT</span><br><span class="line">18      coolshell.cn:80 117.136.20.85:50025     FIN_WAIT2</span><br></pre></td></tr></table></figure>
+
+<p>再来看看模式取反的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;$6 !~ /WAIT/ || NR==1 &#123;print NR,$4,$5,$6&#125;&apos; OFS=&quot;\t&quot; netstat.txt</span><br><span class="line">1       Local-Address   Foreign-Address State</span><br><span class="line">2       0.0.0.0:3306    0.0.0.0:*       LISTEN</span><br><span class="line">3       0.0.0.0:80      0.0.0.0:*       LISTEN</span><br><span class="line">4       127.0.0.1:9000  0.0.0.0:*       LISTEN</span><br><span class="line">7       coolshell.cn:80 110.194.134.189:1032    ESTABLISHED</span><br><span class="line">8       coolshell.cn:80 123.169.124.111:49809   ESTABLISHED</span><br><span class="line">10      coolshell.cn:80 123.169.124.111:49829   ESTABLISHED</span><br><span class="line">12      coolshell.cn:80 61.148.242.38:30901     ESTABLISHED</span><br><span class="line">14      coolshell.cn:80 110.194.134.189:4796    ESTABLISHED</span><br><span class="line">16      coolshell.cn:80 208.115.113.92:50601    LAST_ACK</span><br><span class="line">17      coolshell.cn:80 123.169.124.111:49840   ESTABLISHED</span><br><span class="line">19      :::22   :::*    LISTEN</span><br></pre></td></tr></table></figure>
+
+<p>或是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk &apos;!/WAIT/&apos; netstat.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="折分文件"><a href="#折分文件" class="headerlink" title="折分文件"></a>折分文件</h3><p>awk拆分文件很简单，使用重定向就好了。下面这个例子，是按第6例分隔文件，相当的简单（其中的NR!=1表示不处理表头）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;NR!=1&#123;print &gt; $6&#125;&apos; netstat.txt</span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">ESTABLISHED  FIN_WAIT1  FIN_WAIT2  LAST_ACK  LISTEN  netstat.txt  TIME_WAIT</span><br><span class="line"></span><br><span class="line">$ cat ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        110.194.134.189:1032        ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49809       ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49829       ESTABLISHED</span><br><span class="line">tcp        0   4166 coolshell.cn:80        61.148.242.38:30901         ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        110.194.134.189:4796        ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49840       ESTABLISHED</span><br><span class="line"></span><br><span class="line">$ cat FIN_WAIT1</span><br><span class="line">tcp        0      1 coolshell.cn:80        124.152.181.209:26825       FIN_WAIT1</span><br><span class="line"></span><br><span class="line">$ cat FIN_WAIT2</span><br><span class="line">tcp        0      0 coolshell.cn:80        61.140.101.185:37538        FIN_WAIT2</span><br><span class="line">tcp        0      0 coolshell.cn:80        116.234.127.77:11502        FIN_WAIT2</span><br><span class="line">tcp        0      0 coolshell.cn:80        117.136.20.85:50025         FIN_WAIT2</span><br><span class="line"></span><br><span class="line">$ cat LAST_ACK</span><br><span class="line">tcp        0      1 coolshell.cn:80        208.115.113.92:50601        LAST_ACK</span><br><span class="line"></span><br><span class="line">$ cat LISTEN</span><br><span class="line">tcp        0      0 0.0.0.0:3306           0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 0.0.0.0:80             0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 127.0.0.1:9000         0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 :::22                  :::*                        LISTEN</span><br><span class="line"></span><br><span class="line">$ cat TIME_WAIT</span><br><span class="line">tcp        0      0 coolshell.cn:80        124.205.5.146:18245         TIME_WAIT</span><br><span class="line">tcp        0      0 coolshell.cn:80        183.60.215.36:36970         TIME_WAIT</span><br><span class="line">tcp        0      0 coolshell.cn:80        183.60.212.163:51082        TIME_WAIT</span><br></pre></td></tr></table></figure>
+
+<p>你也可以把指定的列输出到文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk &apos;NR!=1&#123;print $4,$5 &gt; $6&#125;&apos; netstat.txt</span><br></pre></td></tr></table></figure>
+
+<p>再复杂一点：（注意其中的if-else-if语句，可见awk其实是个脚本解释器）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;NR!=1&#123;if($6 ~ /TIME|ESTABLISHED/) print &gt; &quot;1.txt&quot;;</span><br><span class="line">else if($6 ~ /LISTEN/) print &gt; &quot;2.txt&quot;;</span><br><span class="line">else print &gt; &quot;3.txt&quot; &#125;&apos; netstat.txt</span><br><span class="line"></span><br><span class="line">$ ls ?.txt</span><br><span class="line">1.txt  2.txt  3.txt</span><br><span class="line"></span><br><span class="line">$ cat 1.txt</span><br><span class="line">tcp        0      0 coolshell.cn:80        124.205.5.146:18245         TIME_WAIT</span><br><span class="line">tcp        0      0 coolshell.cn:80        110.194.134.189:1032        ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49809       ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49829       ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        183.60.215.36:36970         TIME_WAIT</span><br><span class="line">tcp        0   4166 coolshell.cn:80        61.148.242.38:30901         ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        110.194.134.189:4796        ESTABLISHED</span><br><span class="line">tcp        0      0 coolshell.cn:80        183.60.212.163:51082        TIME_WAIT</span><br><span class="line">tcp        0      0 coolshell.cn:80        123.169.124.111:49840       ESTABLISHED</span><br><span class="line"></span><br><span class="line">$ cat 2.txt</span><br><span class="line">tcp        0      0 0.0.0.0:3306           0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 0.0.0.0:80             0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 127.0.0.1:9000         0.0.0.0:*                   LISTEN</span><br><span class="line">tcp        0      0 :::22                  :::*                        LISTEN</span><br><span class="line"></span><br><span class="line">$ cat 3.txt</span><br><span class="line">tcp        0      0 coolshell.cn:80        61.140.101.185:37538        FIN_WAIT2</span><br><span class="line">tcp        0      0 coolshell.cn:80        116.234.127.77:11502        FIN_WAIT2</span><br><span class="line">tcp        0      1 coolshell.cn:80        124.152.181.209:26825       FIN_WAIT1</span><br><span class="line">tcp        0      1 coolshell.cn:80        208.115.113.92:50601        LAST_ACK</span><br><span class="line">tcp        0      0 coolshell.cn:80        117.136.20.85:50025         FIN_WAIT2</span><br></pre></td></tr></table></figure>
+
+<h3 id="统计"><a href="#统计" class="headerlink" title="统计"></a>统计</h3><p>下面的命令计算所有的C文件，CPP文件和H文件的文件大小总和。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l  *.cpp *.c *.h | awk &apos;&#123;sum+=$5&#125; END &#123;print sum&#125;&apos;</span><br><span class="line">2511401</span><br></pre></td></tr></table></figure>
+
+<p>我们再来看一个统计各个connection状态的用法：（我们可以看到一些编程的影子了，大家都是程序员我就不解释了。注意其中的数组的用法）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ awk &apos;NR!=1&#123;a[$6]++;&#125; END &#123;for (i in a) print i &quot;, &quot; a[i];&#125;&apos; netstat.txt</span><br><span class="line">TIME_WAIT, 3</span><br><span class="line">FIN_WAIT1, 1</span><br><span class="line">ESTABLISHED, 6</span><br><span class="line">FIN_WAIT2, 3</span><br><span class="line">LAST_ACK, 1</span><br><span class="line">LISTEN, 4</span><br></pre></td></tr></table></figure>
+
+<p>再来看看统计每个用户的进程的占了多少内存（注：sum的RSS那一列）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ps aux | awk &apos;NR!=1&#123;a[$1]+=$6;&#125; END &#123; for(i in a) print i &quot;, &quot; a[i]&quot;KB&quot;;&#125;&apos;</span><br><span class="line">dbus, 540KB</span><br><span class="line">mysql, 99928KB</span><br><span class="line">www, 3264924KB</span><br><span class="line">root, 63644KB</span><br><span class="line">hchen, 6020KB</span><br></pre></td></tr></table></figure>
+
+<h2 id="脱掉内衣"><a href="#脱掉内衣" class="headerlink" title="脱掉内衣"></a>脱掉内衣</h2><h3 id="awk脚本"><a href="#awk脚本" class="headerlink" title="awk脚本"></a>awk脚本</h3><p>在上面我们可以看到一个END关键字。END的意思是“处理完所有的行的标识”，即然说到了END就有必要介绍一下BEGIN，这两个关键字意味着执行前和执行后的意思，语法如下：</p>
+<ul>
+<li>BEGIN{ 这里面放的是执行前的语句 }</li>
+<li>END {这里面放的是处理完所有的行后要执行的语句 }</li>
+<li>{这里面放的是处理每一行时要执行的语句}</li>
+</ul>
+<p>为了说清楚这个事，我们来看看下面的示例：</p>
+<p>假设有这么一个文件（学生成绩表）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cat score.txt</span><br><span class="line">Marry   2143 78 84 77</span><br><span class="line">Jack    2321 66 78 45</span><br><span class="line">Tom     2122 48 77 71</span><br><span class="line">Mike    2537 87 97 95</span><br><span class="line">Bob     2415 40 57 62</span><br></pre></td></tr></table></figure>
+
+<p>我们的awk脚本如下（我没有写有命令行上是因为命令行上不易读，另外也在介绍另一种用法）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ cat cal.awk</span><br><span class="line">#!/bin/awk -f</span><br><span class="line">#运行前</span><br><span class="line">BEGIN &#123;</span><br><span class="line">    math = 0</span><br><span class="line">    english = 0</span><br><span class="line">    computer = 0</span><br><span class="line"></span><br><span class="line">    printf &quot;NAME    NO.   MATH  ENGLISH  COMPUTER   TOTAL\n&quot;</span><br><span class="line">    printf &quot;---------------------------------------------\n&quot;</span><br><span class="line">&#125;</span><br><span class="line">#运行中</span><br><span class="line">&#123;</span><br><span class="line">    math+=$3</span><br><span class="line">    english+=$4</span><br><span class="line">    computer+=$5</span><br><span class="line">    printf &quot;%-6s %-6s %4d %8d %8d %8d\n&quot;, $1, $2, $3,$4,$5, $3+$4+$5</span><br><span class="line">&#125;</span><br><span class="line">#运行后</span><br><span class="line">END &#123;</span><br><span class="line">    printf &quot;---------------------------------------------\n&quot;</span><br><span class="line">    printf &quot;  TOTAL:%10d %8d %8d \n&quot;, math, english, computer</span><br><span class="line">    printf &quot;AVERAGE:%10.2f %8.2f %8.2f\n&quot;, math/NR, english/NR, computer/NR</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们来看一下执行结果：（也可以这样运行 ./cal.awk score.txt）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ awk -f cal.awk score.txt</span><br><span class="line">NAME    NO.   MATH  ENGLISH  COMPUTER   TOTAL</span><br><span class="line">---------------------------------------------</span><br><span class="line">Marry  2143     78       84       77      239</span><br><span class="line">Jack   2321     66       78       45      189</span><br><span class="line">Tom    2122     48       77       71      196</span><br><span class="line">Mike   2537     87       97       95      279</span><br><span class="line">Bob    2415     40       57       62      159</span><br><span class="line">---------------------------------------------</span><br><span class="line">  TOTAL:       319      393      350</span><br><span class="line">AVERAGE:     63.80    78.60    70.00</span><br></pre></td></tr></table></figure>
+
+<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><p>即然说到了脚本，我们来看看怎么和环境变量交互：（使用-v参数和ENVIRON，使用ENVIRON的环境变量需要export）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ x=5</span><br><span class="line">$ y=10</span><br><span class="line">$ export y</span><br><span class="line">$ echo $x $y</span><br><span class="line">5 10</span><br><span class="line">$ awk -v val=$x &apos;&#123;print $1, $2, $3, $4+val, $5+ENVIRON[&quot;y&quot;]&#125;&apos; OFS=&quot;\t&quot; score.txt</span><br><span class="line">Marry   2143    78      89      87</span><br><span class="line">Jack    2321    66      83      55</span><br><span class="line">Tom     2122    48      82      81</span><br><span class="line">Mike    2537    87      102     105</span><br><span class="line">Bob     2415    40      62      72</span><br></pre></td></tr></table></figure>
+
+<h2 id="几个花活"><a href="#几个花活" class="headerlink" title="几个花活"></a>几个花活</h2><p>最后，我们再来看几个小例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#从file文件中找出长度大于80的行</span><br><span class="line">awk &apos;length&gt;80&apos; file</span><br><span class="line"></span><br><span class="line">#按连接数查看客户端IP</span><br><span class="line">netstat -ntu | awk &apos;&#123;print $5&#125;&apos; | cut -d: -f1 | sort | uniq -c | sort -nr</span><br><span class="line"></span><br><span class="line">#打印99乘法表</span><br><span class="line">seq 9 | sed &apos;H;g&apos; | awk -v RS=&apos;&apos; &apos;&#123;for(i=1;i&lt;=NF;i++)printf(&quot;%dx%d=%d%s&quot;, i, NR, i*NR, i==NR?&quot;\n&quot;:&quot;\t&quot;)&#125;&apos;</span><br></pre></td></tr></table></figure>
+
+<h2 id="自己撸吧"><a href="#自己撸吧" class="headerlink" title="自己撸吧"></a>自己撸吧</h2><p>关于其中的一些知识点可以参看gawk的手册：</p>
+<ul>
+<li>内建变量，参看：<a href="http://www.gnu.org/software/gawk/manual/gawk.html#Built_002din-Variables" target="_blank" rel="noopener">http://www.gnu.org/software/gawk/manual/gawk.html#Built_002din-Variables</a></li>
+<li>流控方面，参看：<a href="http://www.gnu.org/software/gawk/manual/gawk.html#Statements" target="_blank" rel="noopener">http://www.gnu.org/software/gawk/manual/gawk.html#Statements</a></li>
+<li>内建函数，参看：<a href="http://www.gnu.org/software/gawk/manual/gawk.html#Built_002din" target="_blank" rel="noopener">http://www.gnu.org/software/gawk/manual/gawk.html#Built_002din</a></li>
+<li>正则表达式，参看：<a href="http://www.gnu.org/software/gawk/manual/gawk.html#Regexp" target="_blank" rel="noopener">http://www.gnu.org/software/gawk/manual/gawk.html#Regexp</a></li>
+</ul>
+<p>转自：<a href="https://coolshell.cn/articles/9070.html" target="_blank" rel="noopener">https://coolshell.cn/articles/9070.html</a></p>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/linux/">linux</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,378 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Kong-API网关介绍(研发视角) › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="在微服务架构中，由于系统和服务的细分，导致系统结构变得非常复杂，为了跨平台，为了统一集中管理API，同时为了不暴露后置服务。甚至有时候需要对请求进行一些认证、安全、负载均衡、限流、熔断等中间操作。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Kong-API网关介绍(研发视角)">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">Kong-API网关介绍(研发视角)</h1>
+  
+
+      
+        <time datetime="2019-10-31T03:51:58.000Z">2019-10-31</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>在微服务架构中，由于系统和服务的细分，导致系统结构变得非常复杂，为了跨平台，为了统一集中管理API，同时为了不暴露后置服务。甚至有时候需要对请求进行一些认证、安全、负载均衡、限流、熔断等中间操作。<a id="more"></a></p>
+<p>基于此类种种的客观需求，一个类似综合前置的系统就产生了，这就是API网关(API Gateway)。</p>
+<p>API网关作为分散在各个业务系统微服务的API聚合点和统一接入点，外部请求通过访问这个接入点，即可访问内部所有的REST API服务。</p>
+<p><img src="/img/kong/arch.png"></p>
+<h2 id="为什么要引入Kong"><a href="#为什么要引入Kong" class="headerlink" title="为什么要引入Kong"></a>为什么要引入Kong</h2><p>简单来说引入Kong主要解决以下几个问题：</p>
+<ul>
+<li>反向代理</li>
+<li>负载均衡</li>
+<li>指标监控</li>
+<li>热更新</li>
+<li>健康检查</li>
+<li>服务治理（认证、访问控制、限流、熔断、黑白名单等）</li>
+</ul>
+<h3 id="反向代理、负载均衡——Nginx是怎么做的"><a href="#反向代理、负载均衡——Nginx是怎么做的" class="headerlink" title="反向代理、负载均衡——Nginx是怎么做的"></a>反向代理、负载均衡——Nginx是怎么做的</h3><h4 id="upstream"><a href="#upstream" class="headerlink" title="upstream"></a>upstream</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">upstream flowable_server &#123;</span><br><span class="line">    server 192.168.126.73:8080 weight=1;</span><br><span class="line">    server 192.168.126.74:8080 weight=1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="location"><a href="#location" class="headerlink" title="location"></a>location</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">location /flowable-modeler &#123;</span><br><span class="line">	proxy_pass		http://flowable_server;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /flowable-task &#123;</span><br><span class="line">	proxy_pass		http://flowable_server;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /flowable-idm &#123;</span><br><span class="line">	proxy_pass		http://flowable_server;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="反向代理、负载均衡——Kong怎么做"><a href="#反向代理、负载均衡——Kong怎么做" class="headerlink" title="反向代理、负载均衡——Kong怎么做"></a>反向代理、负载均衡——Kong怎么做</h3><h4 id="upstream-1"><a href="#upstream-1" class="headerlink" title="upstream"></a>upstream</h4><p><a href="http://192.168.126.21:1337/#!/upstreams" target="_blank" rel="noopener">http://192.168.126.21:1337/#!/upstreams</a></p>
+<p><img src="/img/kong/upstream.png"></p>
+<h4 id="service"><a href="#service" class="headerlink" title="service"></a>service</h4><p><a href="http://192.168.126.21:1337/#!/services" target="_blank" rel="noopener">http://192.168.126.21:1337/#!/services</a></p>
+<p><img src="/img/kong/service.png"></p>
+<h4 id="route"><a href="#route" class="headerlink" title="route"></a>route</h4><p><a href="http://192.168.126.21:1337/#!/routes" target="_blank" rel="noopener">http://192.168.126.21:1337/#!/routes</a></p>
+<p><img src="/img/kong/route.png"></p>
+<h3 id="指标监控-——-Nginx怎么做"><a href="#指标监控-——-Nginx怎么做" class="headerlink" title="指标监控 —— Nginx怎么做"></a>指标监控 —— Nginx怎么做</h3><ul>
+<li>流量</li>
+<li>响应时间</li>
+<li>带宽使用</li>
+<li>40x统计、50x统计</li>
+</ul>
+<p><img src="/img/kong/nginx_metrics.png"></p>
+<h3 id="指标监控-——-Kong怎么做"><a href="#指标监控-——-Kong怎么做" class="headerlink" title="指标监控 —— Kong怎么做"></a>指标监控 —— Kong怎么做</h3><ul>
+<li>按服务统计流量</li>
+<li>按服务、按状态码统计响应时间</li>
+<li>按服务统计带宽使用</li>
+</ul>
+<p><img src="/img/kong/kong_metrics.png"></p>
+<h2 id="Kong的使用场景-研发视角"><a href="#Kong的使用场景-研发视角" class="headerlink" title="Kong的使用场景(研发视角)"></a>Kong的使用场景(研发视角)</h2><h3 id="1-查看服务代理和负载配置"><a href="#1-查看服务代理和负载配置" class="headerlink" title="1. 查看服务代理和负载配置"></a>1. 查看服务代理和负载配置</h3><ul>
+<li>查询服务路由</li>
+<li>查询服务负载节点和端口</li>
+</ul>
+<h3 id="2-负载节点操作"><a href="#2-负载节点操作" class="headerlink" title="2. 负载节点操作"></a>2. 负载节点操作</h3><p><img src="/img/kong/load.png"></p>
+<ol>
+<li>添加负载节点 —— 添加target（无法修改）</li>
+<li>调整权重（weight）—— 权重无法直接修改，可通过再次添加相同的target来更新权重</li>
+<li>移除负载节点 —— 删除target</li>
+</ol>
+<p><strong>注意：set unhealthy 按钮会导致服务不稳定，切勿使用！！！</strong></p>
+<h3 id="3-灰度发布"><a href="#3-灰度发布" class="headerlink" title="3. 灰度发布"></a>3. 灰度发布</h3><p>为了配合生产环境的上线，专门提供一个Kong的实例，用于灰度发布（数据库指向kongpre，切记！！！）。</p>
+<h4 id="灰度策略"><a href="#灰度策略" class="headerlink" title="灰度策略"></a>灰度策略</h4><ol>
+<li>搭建专门用于灰度发布的Kong的实例（布署在192.168.1.6），和生产的Kong实例的区别为upstream只配置灰度的target（H区节点，长期有效）</li>
+<li>判断请求来源IP如果为公司的公网IP（60.247.93.190）时，全部转到灰度的Kong实例上（这条规则长期有效，不会随着上线的动作修改）</li>
+</ol>
+<h4 id="上线步骤"><a href="#上线步骤" class="headerlink" title="上线步骤"></a>上线步骤</h4><ol>
+<li>下线灰度节点（下线灰度节点前，确认AB节点同时在线上）</li>
+<li>布署灰度节点，回归测试</li>
+<li>测试通过后，上线灰度节点</li>
+<li>下线另一个节点，布署服务后，上线</li>
+</ol>
+<h4 id="需要注意的问题"><a href="#需要注意的问题" class="headerlink" title="需要注意的问题"></a>需要注意的问题</h4><ol>
+<li>增加Kong的灰度实例后，生产Kong的配置变更，同时要在灰度的Kong实例做同样的变更（target保持单节点），确保两个实例配置同步</li>
+<li>公司内网访问通过灰度的Kong实例，和客户的访问路由有区别，排查问题时，需要注意一下！</li>
+<li>每次上线后需要对Kong的配置进行备份，并注明是哪个迭代上线，或者哪个服务的线上bug修复，以便出现问题可以追溯</li>
+</ol>
+<h3 id="3-查看服务监控指标"><a href="#3-查看服务监控指标" class="headerlink" title="3. 查看服务监控指标"></a>3. 查看服务监控指标</h3><p><a href="http://bi.51trust.com/d/mY9p7dQmz/kong-apiliu-liang-wang-guan-jian-kong?orgId=1" target="_blank" rel="noopener">http://bi.51trust.com/d/mY9p7dQmz/kong-apiliu-liang-wang-guan-jian-kong?orgId=1</a></p>
+<h4 id="监控指标"><a href="#监控指标" class="headerlink" title="监控指标"></a>监控指标</h4><h5 id="1-流量（RPS）"><a href="#1-流量（RPS）" class="headerlink" title="1. 流量（RPS）"></a>1. 流量（RPS）</h5><p>每秒处理的请求数目，等效于QPS</p>
+<p><img src="/img/kong/rps.png"></p>
+<h5 id="2-延迟（Latency）"><a href="#2-延迟（Latency）" class="headerlink" title="2. 延迟（Latency）"></a>2. 延迟（Latency）</h5><p>表示Kong接收来自客户端的请求并将请求发送到上游服务</p>
+<p><img src="/img/kong/latency.png"></p>
+<h5 id="3-响应时间（Request-Time）"><a href="#3-响应时间（Request-Time）" class="headerlink" title="3. 响应时间（Request Time）"></a>3. 响应时间（Request Time）</h5><p>从接受用户请求的第一个字节到发送完响应数据，与客户端是否收到响应无关</p>
+<p><img src="/img/kong/request.png"></p>
+<h5 id="4-服务端响应时间（Upstream-Time）"><a href="#4-服务端响应时间（Upstream-Time）" class="headerlink" title="4. 服务端响应时间（Upstream Time）"></a>4. 服务端响应时间（Upstream Time）</h5><p>从Nginx建立连接开始，到发送完响应数据</p>
+<p><img src="/img/kong/upstream_time.png"></p>
+<h5 id="5-Request-Time-VS-Upstream-Time"><a href="#5-Request-Time-VS-Upstream-Time" class="headerlink" title="5. Request Time VS Upstream Time"></a>5. Request Time VS Upstream Time</h5><p>如果把整个过程补充起来的话，应该是：</p>
+<p>[1用户请求］——［2建立Nginx连接］——［3发送响应］——［4接收响应］——［5关闭Nginx连接］</p>
+<p>upstream_time: 2,3,4,5</p>
+<p>request_time: 1,2,3,4,5</p>
+<p>Upstream Time 比 Request Time 少了［1用户请求］的时间，如果用户端网络状况较差或者传递数据本身较大，再考虑到，当使用POST方式传参时 Nginx会先把request body缓存起来，这样就解释了<br>为什么 request_time 有可能会比 upstream_time 要大很多</p>
+<h5 id="5-带宽用量（BandWidth）"><a href="#5-带宽用量（BandWidth）" class="headerlink" title="5. 带宽用量（BandWidth）"></a>5. 带宽用量（BandWidth）</h5><p>每秒请求的字节数，Ingress：下行带宽，Egress：上行带宽</p>
+<p><img src="/img/kong/bandwidth.png"></p>
+<h5 id="6-内存使用率"><a href="#6-内存使用率" class="headerlink" title="6. 内存使用率"></a>6. 内存使用率</h5><p><img src="/img/kong/memery.png"></p>
+<h2 id="健康检查"><a href="#健康检查" class="headerlink" title="健康检查"></a>健康检查</h2><p>用户可以使用Kong的 ring-balancer 配置 API 代理，ring-balancer 会在多个 target 之间实现负载均衡，并基于 upstream 配置对每个 target 进行健康检查，针对它们是否正常响应判定它们是否健康，之后 ring-balancer 仅会将流量路由到健康的 target，Kong支持两种健康检查，可以单独使用，也可以结合使用：</p>
+<ul>
+<li>主动检查：定期检查 target 中指定的 Http 或 Https 端点，并根据其响应确定 target 的运行状况</li>
+<li>被动检查：也称为断路器，Kong会分析正在运行的代理流量，并根据其响应请求行为确定 target 的运行状况</li>
+</ul>
+<p>两类健康检查器总结</p>
+<ul>
+<li>主动健康检查器可以在 target 恢复健康之后自动恢复流量；但是被动健康检查器不能</li>
+<li>被动健康检查器不会产生额外的流量；主动健康检查器会</li>
+<li>主动健康检查器需要一条URL路径可以访问，作为探测的端点（通常简单配置为”/“）；被动检查器不需要这样的配置</li>
+<li>应用可以根据自身的健康指标生成一个状态码，提供给主动健康检查器，这样即使 target 还能持续提供给被动健康检查器流量，同时也能响应主动健康检查器的错误状态</li>
+<li>用户可以组合使用者两种模式，例如使用被动检查器仅根据流量状态监控该 target 健康与否，再仅在非健康状态情况下使用主动检查器，以便自动重启该 target</li>
+</ul>
+<p><strong>注意：开启Active health checks 时，Unhealthy TCP failures 必须设置为 &gt; 0。</strong></p>
+<h3 id="主动健康检查配置"><a href="#主动健康检查配置" class="headerlink" title="主动健康检查配置"></a>主动健康检查配置</h3><table>
+<thead>
+<tr>
+<th>KEY</th>
+<th>DESCRIPTION</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>healthchecks.active.http_path</td>
+<td>向目标发出HTTP GET请求时应使用的路径，默认值为“/”</td>
+</tr>
+<tr>
+<td>healthchecks.active.timeout</td>
+<td>探测的HTTP GET请求的连接超时限制。默认值为1秒</td>
+</tr>
+<tr>
+<td>healthchecks.active.concurrency</td>
+<td>在活动运行状况检查中同时检查的目标数</td>
+</tr>
+<tr>
+<td>healthchecks.active.healthy.interval</td>
+<td>针对健康目标的活动健康检查之间的间隔（以秒为单位），值为零表示不应执行健康目标的活动探测</td>
+</tr>
+<tr>
+<td>healthchecks.active.unhealthy.interval</td>
+<td>针对不健康目标的活动健康检查之间的间隔（以秒为单位），值为零表示不应执行不健康目标的活动探测</td>
+</tr>
+<tr>
+<td>healthchecks.active.healthy.successes</td>
+<td>多少次通过健康检查后判定为成功</td>
+</tr>
+<tr>
+<td>healthchecks.active.unhealthy.tcp_failures</td>
+<td>活动探测器中考虑目标不健康的TCP故障数，多少次健康检查失败后判定为不健康</td>
+</tr>
+<tr>
+<td>healthchecks.active.unhealthy.timeouts</td>
+<td>活动探测器中考虑目标不健康的超时次数</td>
+</tr>
+<tr>
+<td>healthchecks.active.unhealthy.http_failures</td>
+<td>活动探测器中考虑目标不健康的HTTP故障数，多少次不通过健康检查后判定为失败</td>
+</tr>
+</tbody></table>
+<h3 id="被动健康检查配置"><a href="#被动健康检查配置" class="headerlink" title="被动健康检查配置"></a>被动健康检查配置</h3><table>
+<thead>
+<tr>
+<th>KEY</th>
+<th>DESCRIPTION</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>healthchecks.passive.healthy.successes</td>
+<td>HTTP状态成功次数的阈值，这个值需要设置为正值</td>
+</tr>
+<tr>
+<td>healthchecks.passive.unhealthy.tcp_failures</td>
+<td>TCP失败计数器</td>
+</tr>
+<tr>
+<td>healthchecks.passive.unhealthy.timeouts</td>
+<td>超时次数阈值</td>
+</tr>
+<tr>
+<td>healthchecks.passive.unhealthy.http_failures</td>
+<td>HTTP状态失败次数的阈值</td>
+</tr>
+</tbody></table>
+<h3 id="停用健康检查"><a href="#停用健康检查" class="headerlink" title="停用健康检查"></a>停用健康检查</h3><p>对于健康检查中所有的阈值和间隔，将它们设置为0，就可以禁用该属性表示的功能，将探测的间隔时间设为0可以禁用该探测，这样用户可以对健康检查程序的行为进行细粒度的控制</p>
+<p>总结起来：</p>
+<p>禁用主动健康检查，需要将 healthchecks.active.healthy.interval和 healthchecks.active.unhealthy.interval 这两个参数都设为0；</p>
+<p>禁用被动健康检查，需要将被动健康检查的阈值都设置为0</p>
+<p>默认情况下，健康检查器中的所有阈值和时间间隔默认值都为0，这意味着新创建的 upstream 默认情况下是完全禁用健康检查的</p>
+<h2 id="服务治理"><a href="#服务治理" class="headerlink" title="服务治理"></a>服务治理</h2><p>在请求到达kong之后，转发给后端应用之前，你可以应用kong自带的插件对请求进行处理，合法认证，限流控制，黑白名单校验，日志采集等等。同时，你也可以按照kong的教程文档，定制开发属于自己的插件。</p>
+<p>Kong的插件主要分五大类</p>
+<ul>
+<li>Authentication认证</li>
+<li>Security安全</li>
+<li>Traffic Control流量控制</li>
+<li>Analytics &amp; Monitoring分析&amp;监控</li>
+<li>Logging日志</li>
+<li>其他</li>
+</ul>
+<p>常用的插件</p>
+<ul>
+<li>rate-limiting（限流）</li>
+<li>ip-restriction（黑白名单）</li>
+<li>Basic Authentication（授权认证）</li>
+<li>Prometheus(指标监控)</li>
+</ul>
+<p><img src="/img/kong/plugin.png"></p>
+<h2 id="相关资源"><a href="#相关资源" class="headerlink" title="相关资源"></a>相关资源</h2><ul>
+<li>Kong安装布署指南</li>
+<li>API网关升级布署方案</li>
+<li>Kong配置指南</li>
+<li>PostgreSQL11安装布署指南</li>
+<li>Kong官网：<a href="https://konghq.com/kong/" target="_blank" rel="noopener">https://konghq.com/kong/</a></li>
+</ul>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/服务网关/">服务网关</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>常用处理文件的命令 › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="在UNIX系统中信息存储在文件中，它像日常的办公室文件。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="常用处理文件的命令">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">常用处理文件的命令</h1>
+  
+
+      
+        <time datetime="2016-08-22T13:45:28.000Z">2016-08-22</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>在UNIX系统中信息存储在文件中，它像日常的办公室文件。<a id="more"></a>每个文件有名字，内容，存放地点以及某些管理信息，诸如所有者以及文件大小等。有大量的程序可对文件进行操作，下面我们只介绍最频繁使用的那些命令。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ls</td>
+<td>列出当前目录的文件名</td>
+</tr>
+<tr>
+<td>ls 文件名</td>
+<td>只列出指定的文件</td>
+</tr>
+<tr>
+<td>ls -t</td>
+<td>按时间次序列出文件，时间最近的文件排在最前面</td>
+</tr>
+<tr>
+<td>ls -l</td>
+<td>长列表，包括较多信息；还可用ls -lt</td>
+</tr>
+<tr>
+<td>ls -u</td>
+<td>按最后使用的时间次序列出文件；也可用ls -lu, ls -lut</td>
+</tr>
+<tr>
+<td>ls -r</td>
+<td>以逆序列出文件；可组成-rt，-rlt等等</td>
+</tr>
+<tr>
+<td>ed 文件名</td>
+<td>编辑文件</td>
+</tr>
+<tr>
+<td>cp 文件1 文件2</td>
+<td>把文件1拷贝到文件2，若文件2存在，则覆盖文件2</td>
+</tr>
+<tr>
+<td>mv 文件1 文件2</td>
+<td>文件1换名为文件2，若文件2存在，则覆盖文件2</td>
+</tr>
+<tr>
+<td>rm 文件名</td>
+<td>删除文件，不能恢复</td>
+</tr>
+<tr>
+<td>cat 文件名</td>
+<td>打印文件</td>
+</tr>
+<tr>
+<td>pr 文件名</td>
+<td>按打印机格式(表头，每页66行)打印文件</td>
+</tr>
+<tr>
+<td>pr -n 文件名</td>
+<td>以n列形式打印文件</td>
+</tr>
+<tr>
+<td>pr -m 文件名</td>
+<td>并排打印指定若干文件(多列打印)</td>
+</tr>
+<tr>
+<td>wc 文件名</td>
+<td>统计文件的行，单词(字)和字符</td>
+</tr>
+<tr>
+<td>wc -l 文件名</td>
+<td>统计每个文件的行</td>
+</tr>
+<tr>
+<td>grep 模式 文件名</td>
+<td>打印匹配模式的行</td>
+</tr>
+<tr>
+<td>grep -v 模式 文件</td>
+<td>打印不匹配模式的行</td>
+</tr>
+<tr>
+<td>sort 文件名</td>
+<td>逐行按字母顺序排列</td>
+</tr>
+<tr>
+<td>tail 文件名</td>
+<td>打印文件最后10行</td>
+</tr>
+<tr>
+<td>tail -n 文件名</td>
+<td>打印文件最后n行</td>
+</tr>
+<tr>
+<td>tail +n 文件名</td>
+<td>从第n开始打印</td>
+</tr>
+<tr>
+<td>cmp 文件1 文件2</td>
+<td>打印两个文件差异第一处</td>
+</tr>
+<tr>
+<td>diff 文件1 文件2</td>
+<td>打印两个文件所有不同之处</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/linux/">linux</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+

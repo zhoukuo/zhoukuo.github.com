@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Kong-API配置指南(运维视角) › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="本文介绍如何配置Kong-API网关">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Kong-API配置指南(运维视角)">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">Kong-API配置指南(运维视角)</h1>
+  
+
+      
+        <time datetime="2019-11-02T11:51:58.000Z">2019-11-02</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>本文介绍如何配置Kong-API网关<a id="more"></a></p>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ul>
+<li>Upstream</li>
+<li>Target</li>
+<li>Service</li>
+<li>Routes</li>
+</ul>
+<h3 id="Upstream"><a href="#Upstream" class="headerlink" title="Upstream"></a>Upstream</h3><p>Upstream 对象表示虚拟主机名，可用于通过多个服务（目标）对传入请求进行负载均衡。例如：service.v1.xyz 为Service对象命名的上游host是service.v1.xyz对此服务的请求将代理到上游定义的目标。</p>
+<h3 id="Target"><a href="#Target" class="headerlink" title="Target"></a>Target</h3><p>目标IP地址/主机名，其端口表示后端服务的实例。每个上游都可以有多个target，并且可以动态添加Target。</p>
+<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h3><p>服务实体是每个上游服务的抽象，有自己的服务端口，可能会部署多个节点，服务的主要属性是它的URL（其中，Kong应该代理流量），其可以被设置为单个串或通过指定其protocol， host，port和path。</p>
+<ul>
+<li>Name：服务名称，标识一个服务</li>
+<li>Protocol：http 或者 https</li>
+<li>Host：服务布署节点的IP，如果布署了多个节点，这里就是对应的Upstream的名称（需要使用Upstreams功能配置负载）</li>
+<li>Port：服务的端口，如果使用Upstream，可忽略</li>
+<li>Path：用来区分服务的相对路径，例如：/hisca</li>
+</ul>
+<p>服务与路由相关联（服务可以有许多与之关联的路由）。路由是Kong的入口点，并定义匹配客户端请求的规则。一旦匹配路由，Kong就会将请求代理到其关联的服务。</p>
+<h3 id="Route"><a href="#Route" class="headerlink" title="Route"></a>Route</h3><p>路由实体定义规则以匹配客户端的请求。每个Route与一个Service相关联，一个服务可能有多个与之关联的路由。与给定路由匹配的每个请求都将代理到其关联的Service上。路由的条件至少是Host、Path、Method中的一种，通常我们只使用Path方式的路由。</p>
+<p>Service和Route的组合（以及它们之间的关注点分离）提供了一种强大的路由机制，通过它可以在Kong中定义细粒度的入口点，从而使基础架构路由到不同上游服务。</p>
+<h3 id="实体关系图"><a href="#实体关系图" class="headerlink" title="实体关系图"></a>实体关系图</h3><table>
+<thead>
+<tr>
+<th>实体</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Upstream ：Target</td>
+<td>1 : N</td>
+</tr>
+<tr>
+<td>Service : Upstream</td>
+<td>1 : 1 或 1 : 0</td>
+</tr>
+<tr>
+<td>Service : Route</td>
+<td>1 : N</td>
+</tr>
+</tbody></table>
+<h2 id="使用流程"><a href="#使用流程" class="headerlink" title="使用流程"></a>使用流程</h2><ol>
+<li>添加upstream，配置target（可选）</li>
+<li>添加service，关联upstream/添加host，配置route</li>
+</ol>
+<h2 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范"></a>命名规范</h2><table>
+<thead>
+<tr>
+<th>实体</th>
+<th>命名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Upstream</td>
+<td>&lt;服务名&gt;.api，例如：hisca.api</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>&lt;服务名&gt;.service，例如：hisca.service</td>
+</tr>
+<tr>
+<td>Route</td>
+<td>&lt;服务名&gt;.route，例如：hisca.route</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/服务网关/">服务网关</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+

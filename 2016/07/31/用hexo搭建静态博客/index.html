@@ -1,0 +1,264 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>用hexo搭建静态博客 › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="一直纠结在哪里写博客，尝试过CSDN，开源中国，cnblogs，自己搭建过wordPress，但都不满意。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="用hexo搭建静态博客">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">用hexo搭建静态博客</h1>
+  
+
+      
+        <time datetime="2016-07-31T07:48:18.000Z">2016-07-31</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>一直纠结在哪里写博客，尝试过CSDN，开源中国，cnblogs，自己搭建过wordPress，但都不满意。</p>
+<a id="more"></a>
+<p>直到有一天，发现有人在github上搭建的个人博客，页面简洁、干净，于是到百度一通儿狂搜，一眼看中了hexo，这个逼格极高的程序猿写作方式，就它了！</p>
+<p>hexo出自台湾大学生tommy351之手，是一个基于Node.js的静态博客程序，其编译上百篇文字只需要几秒。hexo生成的静态网页可以直接放到GitHub Pages，BAE，SAE等平台上。</p>
+<ul>
+<li>如果你对默认配置满意，只需几个命令便可秒搭一个hexo。</li>
+<li>如果你跟我一样喜欢折腾下，30分钟也足够个性化。</li>
+<li>如果你过于喜欢折腾，可以折腾个把星期，尽情的玩。</li>
+</ul>
+<p>hexo提供了非常简洁的用户接口，只需要3个命令就可以完成从编写到发布的全过程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#写文章</span></span><br><span class="line">hexo g <span class="comment">#生成html</span></span><br><span class="line">hexo d <span class="comment">#部署</span></span><br></pre></td></tr></table></figure>
+
+<p>下面进入正题</p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="安装Nodejs"><a href="#安装Nodejs" class="headerlink" title="安装Nodejs"></a>安装Nodejs</h3><p>到<a href="https://nodejs.org/" target="_blank" rel="noopener">Nodejs</a>官网下载相应平台的<a href="https://nodejs.org/en/download" target="_blank" rel="noopener">最新版本</a>，一路Next即可。</p>
+<h3 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h3><p>到<a href="https://git-scm.com/" target="_blank" rel="noopener">Git</a>官网下载相应平台的<a href="https://git-scm.com/download" target="_blank" rel="noopener">最新版本</a>，一路Next即可。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Nodejs和Git都安装好之后，可执行如下命令安装hexo：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>然后，执行init命令初始化hexo到你指定的目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;folder&gt;</span><br><span class="line"><span class="built_in">cd</span> &lt;folder&gt;</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<p>好啦，至此，全部安装工作已经完成！</p>
+<h2 id="写文章"><a href="#写文章" class="headerlink" title="写文章"></a>写文章</h2><p>执行new命令，生成指定名称的文章至<folder>/source/_posts/name.md</folder></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="string">"name"</span> <span class="comment">#新建文章</span></span><br></pre></td></tr></table></figure>
+
+<p>postName是md文件的名字，同时也出现在你文章的URL中，postName如果包含空格，必须用”将其包围，postName可以为中文。</p>
+<p>接下来，你就可以用喜爱的编辑器尽情书写你的文章。关于markdown语法，可以参考我的文章<a href="https://zhoukuo.github.io/2016/08/04/Markdown%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" target="_blank" rel="noopener">Markdown入门指南</a>。</p>
+<h2 id="生成静态页面"><a href="#生成静态页面" class="headerlink" title="生成静态页面"></a>生成静态页面</h2><p>cd到你的init目录，执行generate命令，生成静态页面到你的初始化目录下 <folder>/public目录下。</folder></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
+
+<p>命令必须在init目录下执行，否则不成功，也不报错。</p>
+<h2 id="启动本地服务器"><a href="#启动本地服务器" class="headerlink" title="启动本地服务器"></a>启动本地服务器</h2><p>执行server命令，启动本地服务，进行文章预览。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+
+<p>浏览器输入<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000</a>就可以看到效果了！</p>
+<h2 id="文章摘要"><a href="#文章摘要" class="headerlink" title="文章摘要"></a>文章摘要</h2><p>在需要显示摘要的地方添加如下代码即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">以上是摘要</span><br><span class="line">&lt;!--more--&gt;</span><br><span class="line">以下是余下全文</span><br></pre></td></tr></table></figure>
+
+<h2 id="标签和分类"><a href="#标签和分类" class="headerlink" title="标签和分类"></a>标签和分类</h2><p>new命令会生成一个新文件，打开文件默认会提供一些设置属性：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">title: hexo你的博客</span><br><span class="line">date: 2013-11-22 17:11:54</span><br><span class="line">categories: default</span><br><span class="line">tags: [hexo,blog]</span><br></pre></td></tr></table></figure>
+
+<p>categories对应的是分类，tags对应的是标签，多个需要用中括号括起来，多个标签或分类之间用逗号(,)分割。</p>
+<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p>萝卜白菜各有所爱，玩博客换主题是必不可少的，hexo官方提供了主题列表：<a href="https://hexo.io/themes/" target="_blank" rel="noopener">Hexo Themes</a>。<br>通常这些主题都在github平台发布，上面提供Demo、安装文档等等说明，具体的安装步骤非常简单，和直接clone一个普通的代码库没什么区别，通常像这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/wuchong/jacman.git themes/jacman.git</span><br></pre></td></tr></table></figure>
+
+<p>注意要在init所在的folder执行。</p>
+<p>然后修改folder下的_config.yml，修改theme字段为新主题的名字，然后hexo g;hexo d就可以了。</p>
+<h2 id="Github托管"><a href="#Github托管" class="headerlink" title="Github托管"></a>Github托管</h2><ul>
+<li>首先注册一个『GitHub』帐号，已有的默认请忽略</li>
+<li>建立与你用户名对应的仓库，仓库名必须为『your_user_name.github.com』或『your_user_name.github.io』</li>
+<li>添加SSH公钥到『Account settings -&gt; SSH Keys -&gt; Add SSH Key』</li>
+<li>Github托管配置</li>
+</ul>
+<p>前两步忽略，直说第三步，如何添加SSH-Key。</p>
+<p>生成密钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"&lt;acount&gt;"</span></span><br></pre></td></tr></table></figure>
+
+<p>输入文件路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">H:\hexo\blog&gt;ssh-keygen -t rsa -C <span class="string">"bu.ru@qq.com"</span></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (//.ssh/id_rsa): H:\git\myssh\ssh</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved <span class="keyword">in</span> H:\git\myssh\ssh.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> H:\git\myssh\ssh.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">b0:0c:2e:67:33:ab:c1:50:10:40:0a:ba:c1:80:59:22 bu.ru@qq.com</span><br></pre></td></tr></table></figure>
+
+<p>上述命令若成功，会在给定的目录下生成两个文件id)rsa和id_rsa_pub，最后一步：</p>
+<ul>
+<li>用文本编辑器打开ssh.pub文件，拷贝其中的内容，将其添加到<a href="http://github.com/settings/ssh" target="_blank" rel="noopener">Add SSH Key</a><br>最后可以验证一下：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>接下来说一下如何配置Github托管，安装 hexo-deployer-git，否则会报 ERROR Deployer not found: git 的错误。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<p>修改你的 _config.yml 配置文件如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line">deploy:</span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repo: git@github.com:flyoob/flyoob.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<p>注意这里选择的是 ssh 地址。<br>生成静态文件和部署：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>最后出现如下提示就代表成功啦！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INFO  Deploy done: git</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/内容管理/">内容管理</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+

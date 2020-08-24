@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>转：C 语言已死？ › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="今天俗一把，掺乎近期网上最热门的这个话题：C语言已经死了，5个需要忘却它的理由。大家驳来、驳去的。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="转：C 语言已死？">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">转：C 语言已死？</h1>
+  
+
+      
+        <time datetime="2016-07-22T05:51:02.000Z">2016-07-22</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>今天俗一把，掺乎近期网上最热门的这个话题：<a href="http://developer.51cto.com/art/200612/36506.htm" target="_blank" rel="noopener">C语言已经死了，5个需要忘却它的理由</a>。大家<a href="http://blog.csdn.net/xushiweizh/archive/2007/01/07/1476422.aspx" target="_blank" rel="noopener">驳来</a>、<a href="http://blog.csdn.net/Analyst/archive/2007/01/08/1476994.aspx" target="_blank" rel="noopener">驳去</a>的。<a id="more"></a>这的确是一个<a href="http://blog.csdn.net/Raptor/archive/2007/01/10/1478831.aspx" target="_blank" rel="noopener">不值得一驳</a>的问题，我这里也没打算驳斥那些观点。只是写点别的：</p>
+<p>C 并不是对机器模型的完整抽象，就是说把 C 作为一种 portable assembly language 是有缺陷的。即使是做底层，光有 C 也是不够的 (IMHO) 。</p>
+<p>C 语言的卫道者们最喜欢举的一个例子是：某某语言的 VM 都是用 C 的；或是某某语言都是先编译成 C 再编译成本地码等等，以示 C 的重要性。没错，现今的事实如此，这是历史选择的结果。我最近在读一本翻译的很糟糕的书，<a href="http://www.douban.com/subject/1272283/" target="_blank" rel="noopener">《游戏——自然规律支配偶然性》</a> 。如果有人耐着性子读下去，就可以从书中列举的小球游戏看到选择一般怎样发生。</p>
+<p>今天看来 C 并不太适合写 VM ，也非做别的语言编译成本地代码的中间语言之最佳选择（尤其对函数式语言来说）。选择 C 只是没有更好的选择而已。</p>
+<p>我最近读了一些关于<a href="http://blog.codingnow.com/2007/01/c_minus_minus.html" target="_blank" rel="noopener">C–的paper</a> ，C 对 gc 支持的不足可以说是最大的一个缺陷。这一点是语言的不足，用库去解决是不太现实的了。对于函数式语言来说，函数尾调用的堆栈优化也使 C 在性能表现上相形见绌。到了 C++ 解决了一些，不仅外观是拙劣的（大量的 inline 函数的使用），性能依然有欠缺。可悲的是，许多 C 程序员对这些不屑一顾（尤其是对 gc 的错误认识）。</p>
+<p>其实即使是机器语言上的编程，到了具体流行的系统上，也有强烈的历史选择的痕迹。比如堆栈的设计，对于冯诺体系来说并不是必须。但是大家都这么设计了，CPU 也按这个做了优化（提供堆栈寄存器、优化堆栈指令的速度），导致了最终我们都得选择这种结果。别的设计并非不存在，比如 forth 语言就依赖双堆栈来工作。btw ，forth 这种小语言，至今也未能消失。它的大量使用甚至鲜为人知。比如在 boot firmware 领域的地位就无可取代。</p>
+<p>C 在静态语言中没有太大的竞争者其实也是 C 的悲哀。造成了在 C 能力临界点上的领域，它依旧成了最好的选择。这造成了大家在低阶开发上把 C 当万能药来使。今天看来，没有 C 是万万不能的，这也是一个历史选择的结果。假若当年 pascal 战胜了 C ，现今所有用 C 写的代码都用 pascal 来实现也未尝不可。</p>
+<p>C 在历史的选择中走到了今天，当然还会一直存在下去。<br>&lt;完&gt;</p>
+<p>原文地址：<a href="http://blog.codingnow.com/2007/01/is_c_dead.html" target="_blank" rel="noopener">http://blog.codingnow.com/2007/01/is_c_dead.html</a></p>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/c/">c</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+

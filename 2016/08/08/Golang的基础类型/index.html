@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Golang的基础类型 › 平凡之路</title>
+  <meta name="author" content="zhoukuo">
+  
+  <meta name="description" content="Golang内置了以下这些基础类型：">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Golang的基础类型">
+  <meta property="og:site_name" content="平凡之路">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="平凡之路" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+</html>
+
+<body>
+  <header id="header"><div class="meta inner">
+  <h1><a href="/">平凡之路</a></h1>
+  <h2><a href="/">生活不止眼前的苟且，还有诗和远方</a></h2>
+  <nav id="main-nav">
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+    </ul>
+    <div class="clearfix"></div>
+  </nav>
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">Golang的基础类型</h1>
+  
+
+      
+        <time datetime="2016-08-08T11:17:37.000Z">2016-08-08</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>Golang内置了以下这些基础类型：</p>
+<a id="more"></a>
+
+<ul>
+<li>布尔类型：bool</li>
+<li>整型：int8、byte、int16、int、uint、uintptr等</li>
+<li>浮点类型：float32、float64</li>
+<li>复数类型：complex64、complex128</li>
+<li>字符串：string</li>
+<li>字符类型：byte、rune</li>
+<li>错误类型：error</li>
+</ul>
+<h2 id="布尔类型"><a href="#布尔类型" class="headerlink" title="布尔类型"></a>布尔类型</h2><p>Golang的布尔类型和其它语言基本一致：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> v1 <span class="keyword">bool</span></span><br><span class="line">v1 = <span class="literal">true</span></span><br><span class="line">v2 := (<span class="number">1</span> == <span class="number">2</span>)  <span class="comment">// v2也会被推导为bool类型</span></span><br></pre></td></tr></table></figure>
+
+<p>布尔类型不能接受其它类型的赋值，不支持自动或强制的类型转换。以下是错误的：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> b <span class="keyword">bool</span></span><br><span class="line">b = <span class="number">1</span>       <span class="comment">// 编译错误</span></span><br><span class="line">b = <span class="keyword">bool</span>(<span class="number">1</span>) <span class="comment">// 编译错误</span></span><br></pre></td></tr></table></figure>
+
+<p>以下的用法是正确的：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> b <span class="keyword">bool</span></span><br><span class="line">b = (<span class="number">1</span>!=<span class="number">0</span>)</span><br><span class="line">fmt.Println(<span class="string">"Result:"</span>, b)   <span class="comment">// 打印结果为Result: true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="整型"><a href="#整型" class="headerlink" title="整型"></a>整型</h2><p>Golang支持以下所示的这些整型类型：</p>
+<ul>
+<li>int8</li>
+<li>uint8(即byte)</li>
+<li>int16</li>
+<li>uint16</li>
+<li>int32</li>
+<li>uint32</li>
+<li>int64</li>
+<li>uint64</li>
+<li>int</li>
+<li>uint</li>
+<li>uintptr</li>
+</ul>
+<p>需要注意的是，int和int32在Golang里被认为是两种不同的类型，编译器也不会帮你自动做类型转换，比如以下的例子会有编译错误:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> value2 <span class="keyword">int32</span></span><br><span class="line">varlue1 := <span class="number">64</span>       <span class="comment">// value1将会被自动推导为int类型</span></span><br><span class="line">varlue2 = value1    <span class="comment">// 编译错误</span></span><br></pre></td></tr></table></figure>
+
+<p>使用强制类型转换可以解决这个编译错误：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">value2 = <span class="keyword">int32</span>(value1)</span><br></pre></td></tr></table></figure>
+
+<p>在做强制类型转换时，需要注意长度被截断和值溢出问题。</p>
+<p>数值运算和比较运算与C语言完全一致。但位运算中取反在C语言中是~x，而在Golang中是^x。</p>
+<h2 id="浮点类型"><a href="#浮点类型" class="headerlink" title="浮点类型"></a>浮点类型</h2><p>Golang中的浮点类型采用IEEE-754标准的表达方式，定义了两个类型：float32和float64。其中float32等价于C语言的float类型，float64等价于C语言中的double类型。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fvalue1 <span class="keyword">float32</span></span><br><span class="line"></span><br><span class="line">fvalue1 = <span class="number">12</span></span><br><span class="line">fvalue2 = <span class="number">12.0</span>      <span class="comment">// 如果不加小数点，fvalue2会被推导为整型而不是浮点型</span></span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，fvalue2的类型将被推导为float64，而不管赋给它的素质是否是用32位长度表示的。</p>
+<p>因为浮点数不是一种精确的表达方式，所以不能用＝＝来判断两个浮点数是否相等。</p>
+<h2 id="复数类型"><a href="#复数类型" class="headerlink" title="复数类型"></a>复数类型</h2><p>&lt;略&gt;</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Golang中，字符串也是一种基本类型：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> str <span class="keyword">string</span>          <span class="comment">// 声明一个字符串变量</span></span><br><span class="line">str = <span class="string">"Hello wolrd"</span>     <span class="comment">// 字符串赋值</span></span><br><span class="line">ch := str[<span class="number">0</span>]            <span class="comment">// 取字符串的第一个字符</span></span><br><span class="line">fmt.Println(<span class="string">"The length of \"%s\" is %d.\n"</span>, str, <span class="built_in">len</span>(str))</span><br><span class="line">fmt.Println(<span class="string">"The first character of \"%s\" is %c.\n, str, ch)</span></span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，字符串的内容不能在初始化后被修改。</p>
+<p>平常常用的字符串操作包括：</p>
+<ul>
+<li>字符串连接：x + y</li>
+<li>字符串长度：len(s)</li>
+<li>取字符：          s[i]</li>
+</ul>
+<p>更多字符串操作，请参考标准库strings包。</p>
+<p>Golang支持两种方式的字符串遍历，一种是以字节数组的方式遍历：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">str := <span class="string">"Hello, 世界"</span></span><br><span class="line">n := <span class="built_in">len</span>(str)</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">    ch := str[i]        <span class="comment">//依据下标取字符串中的字符，类型为byte</span></span><br><span class="line">    fmt.Println(i, ch)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，这个字符串长度为13。尽管从直观上来说，这个字符串应该只有9个字符，这是因为每个中文字符在UTF8中占3个字节，而不是1个字节。</p>
+<p>另一种是以Unicode字符遍历：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">str := <span class="string">"Hello, 世界"</span></span><br><span class="line"><span class="keyword">for</span> i, ch := <span class="keyword">range</span> str &#123;</span><br><span class="line">    fmt.Println(i, ch)  <span class="comment">//ch的类型为rune</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以Unicode字符方式遍历时，每个字符的类型是rune，而不是byte。</p>
+<h2 id="字符类型"><a href="#字符类型" class="headerlink" title="字符类型"></a>字符类型</h2><p>在Golang中支持两个字符类型，一个是byte(实际上是uint8的别名)，代表UTF－8字符串的单个字节的值；另一个是rune，代表单个Unicode字符。</p>
+<p>出于简化语言的考虑，Golang的多数API都假设字符串为UTF－8编码。尽管Unicode字符在标准库中有支持，但实际上较少使用。</p>
+
+      
+    </div>
+      
+      <footer>
+        
+        
+  
+  <div>
+    <a href="/tags/golang/">golang</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:zhoukuo.github.com">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/08/21/项目开发管理工具推荐/">项目开发管理工具推荐</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
+      </li>
+    
+      <li>
+        <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
+      </li>
+    
+      <li>
+        <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/">c</a><small>6</small></li>
+  
+    <li><a href="/tags/golang/">golang</a><small>10</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>8</small></li>
+  
+    <li><a href="/tags/内容管理/">内容管理</a><small>3</small></li>
+  
+    <li><a href="/tags/持续交付/">持续交付</a><small>7</small></li>
+  
+    <li><a href="/tags/数据库/">数据库</a><small>1</small></li>
+  
+    <li><a href="/tags/文化/">文化</a><small>7</small></li>
+  
+    <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
+  
+    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+  
+    <li><a href="/tags/监控/">监控</a><small>3</small></li>
+  
+    <li><a href="/tags/程序设计/">程序设计</a><small>10</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">链接</h3>
+    <ul class="entry">
+        
+    </ul>
+</div>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 zhoukuo
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+</body>
+</html>
+
