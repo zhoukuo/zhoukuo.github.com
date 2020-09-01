@@ -49,6 +49,41 @@
     <header>
       
   
+    <h1 class="title"><a href="/2020/09/01/使用AWVS进行安全测试/">使用AWVS进行安全测试</a></h1>
+  
+
+      
+        <time datetime="2020-09-01T04:06:50.000Z">2020-09-01</time>
+      
+    </header>
+    <div class="entry">
+      
+        <p>Acunetix Web Vulnerability Scanner（AWVS）是经典的商业漏扫工具，最近更新到了13的版本，</p>
+<h2 id="安装部署"><a href="#安装部署" class="headerlink" title="安装部署"></a>安装部署</h2><p>AWVS支持windows、linux、macos等多种操作系统，但个人更推荐linux，部署方式上Docker最方便，部署起来也很简单，建议大家直接使用Docker版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#  pull 拉取下载镜像</span></span><br><span class="line">docker pull secfa/docker-awvs</span><br><span class="line"></span><br><span class="line"><span class="comment">#  将Docker的3443端口映射到物理机的 13443端口</span></span><br><span class="line">docker run -it -d -p 13443:3443 secfa/docker-awvs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 容器的相关信息</span></span><br><span class="line">awvs13 username: admin@admin.com</span><br><span class="line">awvs13 password: Admin123</span><br><span class="line">AWVS版本：13.0.200217097</span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问：<a href="https://127.0.0.1:13443/" target="_blank" rel="noopener">https://127.0.0.1:13443/</a> 即可</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="第一步：添加目标"><a href="#第一步：添加目标" class="headerlink" title="第一步：添加目标"></a>第一步：添加目标</h3><h3 id="第二布：扫描类型、报告类型"><a href="#第二布：扫描类型、报告类型" class="headerlink" title="第二布：扫描类型、报告类型"></a>第二布：扫描类型、报告类型</h3><h3 id="第三步：查看进度"><a href="#第三步：查看进度" class="headerlink" title="第三步：查看进度"></a>第三步：查看进度</h3><h3 id="第四步：查看报告"><a href="#第四步：查看报告" class="headerlink" title="第四步：查看报告"></a>第四步：查看报告</h3>
+      
+    </div>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+      </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  <div class="post-content">
+    <header>
+      
+  
     <h1 class="title"><a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a></h1>
   
 
@@ -359,41 +394,6 @@
 
 
 
-  <article class="post">
-  <div class="post-content">
-    <header>
-      
-  
-    <h1 class="title"><a href="/2020/04/11/转-SED简明教程/">转-SED简明教程</a></h1>
-  
-
-      
-        <time datetime="2020-04-11T08:29:25.000Z">2020-04-11</time>
-      
-    </header>
-    <div class="entry">
-      
-        <p>awk于1977年出生，今年36岁本命年，sed比awk大2-3岁，awk就像林妹妹，sed就是宝玉哥哥了。所以 林妹妹跳了个Topless，他的哥哥sed坐不住了，也一定要出来抖一抖。
-      
-    </div>
-      
-        
-        <footer>
-          <div class="alignleft">
-            <a href="/2020/04/11/转-SED简明教程/#more" class="more-link">Read More ›</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-      </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -416,6 +416,10 @@
   <ul class="entry">
     
       <li>
+        <a href="/2020/09/01/使用AWVS进行安全测试/">使用AWVS进行安全测试</a>
+      </li>
+    
+      <li>
         <a href="/2020/08/19/敏捷项目管理工具-Taiga/">敏捷项目管理工具-Taiga</a>
       </li>
     
@@ -429,10 +433,6 @@
     
       <li>
         <a href="/2020/07/03/转-用wrk进行性能测试/">转-用wrk进行性能测试</a>
-      </li>
-    
-      <li>
-        <a href="/2020/06/10/转-Draw-io-自认为最好用的流程图绘制软件/">转-Draw.io--自认为最好用的流程图绘制软件</a>
       </li>
     
   </ul>
@@ -460,7 +460,7 @@
   
     <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
   
-    <li><a href="/tags/测试/">测试</a><small>6</small></li>
+    <li><a href="/tags/测试/">测试</a><small>7</small></li>
   
     <li><a href="/tags/监控/">监控</a><small>3</small></li>
   
@@ -474,7 +474,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 16.67px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
   </div>
 </div>
 
