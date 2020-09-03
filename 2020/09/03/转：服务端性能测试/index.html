@@ -6,7 +6,7 @@
   <title>转：服务端性能测试 › 平凡之路</title>
   <meta name="author" content="zhoukuo">
   
-  <meta name="description" content="最近因为工作原因，我又拾起了老本行，开始做Web性能测试。之前虽然做过三四年的性能测试，但是在博客和开源项目方面都没有什么输出，一直是一个很大的遗憾。因此，近期打算围绕服务端性能测试的话题，将自己在这方面的经历进行整理。并且，最近使用的性能测试工具Locust感觉挺不错的，只是其功&amp;gt;能比较单薄">
+  <meta name="description" content="最近因为工作原因，我又拾起了老本行，开始做Web性能测试。之前虽然做过三四年的性能测试，但是在博客和开源项目方面都没有什么输出，一直是一个很大的遗憾。因此，近期打算围绕服务端性能测试的话题，将自己在这方面的经历进行整理。并且，最近使用的性能测试工具Locust感觉挺不错的，只是其功&amp;gt;能比较单薄，特别是在性能指标监控和测试报告图表方面比较缺失，因此也打算在Locust的基础上做二次开发，打造一款自己用得顺手的性能测试工具，暂&amp;gt;且将其命名为LocustPlus吧。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -59,7 +59,7 @@
     </header>
     <div class="entry">
       
-        <p>最近因为工作原因，我又拾起了老本行，开始做Web性能测试。之前虽然做过三四年的性能测试，但是在博客和开源项目方面都没有什么输出，一直是一个很<br>大的遗憾。因此，近期打算围绕服务端性能测试的话题，将自己在这方面的经历进行整理。并且，最近使用的性能测试工具Locust感觉挺不错的，只是其功&gt;能比较单薄，特别是在性能指标监控和测试报告图表方面比较缺失，因此也打算在Locust的基础上做二次开发，打造一款自己用得顺手的性能测试工具，暂&gt;且将其命名为LocustPlus吧。<!--mroe--></p>
+        <p>最近因为工作原因，我又拾起了老本行，开始做Web性能测试。之前虽然做过三四年的性能测试，但是在博客和开源项目方面都没有什么输出，一直是一个很<br>大的遗憾。因此，近期打算围绕服务端性能测试的话题，将自己在这方面的经历进行整理。并且，最近使用的性能测试工具Locust感觉挺不错的，只是其功&gt;能比较单薄，特别是在性能指标监控和测试报告图表方面比较缺失，因此也打算在Locust的基础上做二次开发，打造一款自己用得顺手的性能测试工具，暂&gt;且将其命名为LocustPlus吧。<a id="more"></a></p>
 <h2 id="简述性能测试"><a href="#简述性能测试" class="headerlink" title="简述性能测试"></a>简述性能测试</h2><p>提起性能测试，可能移动APP的从业人员会感觉比较混淆，因为在客户端（Android、iOS）中也有性能测试专项，主要涉及的是APP的启动时间、内存、包大&gt;小、帧率，流量等客户端相关的指标。在本博客之前的文章中，也包含了一些客户端性能测试的内容。需要说明的是，本文所讲解的性能测试都是针对服务&gt;器端，尤指Web系统的，与移动APP的性能测试完全是不同的领域。</p>
 <p>那么，什么是服务端的性能测试呢？</p>
 <p>先从大家都熟悉的功能测试说起吧。例如，我们要测试一个搜索功能，那么我们测试时，就会输入搜索关键词，点击搜索按钮，然后再去查看搜索结果，看&gt;结果是否跟我们输入的搜索关键词匹配，如果匹配则说明搜索功能实现正确。</p>
@@ -189,6 +189,10 @@
   <ul class="entry">
     
       <li>
+        <a href="/2020/09/03/转：深入浅出开源性能测试工具-Locust/">转：深入浅出开源性能测试工具-Locust</a>
+      </li>
+    
+      <li>
         <a href="/2020/09/03/转：服务端性能测试/">转：服务端性能测试</a>
       </li>
     
@@ -202,10 +206,6 @@
     
       <li>
         <a href="/2020/08/11/Apifox试用总结/">Apifox试用总结</a>
-      </li>
-    
-      <li>
-        <a href="/2020/07/15/cUrl使用指南/">cUrl使用指南</a>
       </li>
     
   </ul>
@@ -233,7 +233,7 @@
   
     <li><a href="/tags/服务网关/">服务网关</a><small>4</small></li>
   
-    <li><a href="/tags/测试/">测试</a><small>8</small></li>
+    <li><a href="/tags/测试/">测试</a><small>9</small></li>
   
     <li><a href="/tags/监控/">监控</a><small>3</small></li>
   
@@ -247,7 +247,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/c/" style="font-size: 14.29px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.43px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 15.71px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 15.71px;">文化</a> <a href="/tags/服务网关/" style="font-size: 12.86px;">服务网关</a> <a href="/tags/测试/" style="font-size: 17.14px;">测试</a> <a href="/tags/监控/" style="font-size: 11.43px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
+    <a href="/tags/c/" style="font-size: 15px;">c</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/tags/内容管理/" style="font-size: 11.67px;">内容管理</a> <a href="/tags/持续交付/" style="font-size: 16.67px;">持续交付</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文化/" style="font-size: 16.67px;">文化</a> <a href="/tags/服务网关/" style="font-size: 13.33px;">服务网关</a> <a href="/tags/测试/" style="font-size: 18.33px;">测试</a> <a href="/tags/监控/" style="font-size: 11.67px;">监控</a> <a href="/tags/程序设计/" style="font-size: 20px;">程序设计</a>
   </div>
 </div>
 
