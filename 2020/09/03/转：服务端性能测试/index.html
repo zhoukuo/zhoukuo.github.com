@@ -149,6 +149,7 @@
 <p>另外一点就是并发机制了。Locust的并发机制摒弃了进程和线程，采用协程（gevent）的机制。采用多线程来模拟多用户时，线程数会随着并发数的增加而增加，而线程之间的切换是需要占用资源的，IO的阻塞和线程的sleep会不可避免的导致并发效率下降；正因如此，LoadRunner和Jmeter这类采用进程和线程的测试工具，都很难在单机上模拟出较高的并发压力。而协程和线程的区别在于，协程避免了系统级资源调度，由此大幅提高了性能。正常情况下，单台普通配置的测试机可以生产数千并发压力，这是LoadRunner和Jmeter都无法实现的。</p>
 <p>有了一个不错的引擎，外表装饰简陋点也都是可以接受的了。不过虽然Locust功能单薄，特别是在性能指标监控和测试报告图表方面比较缺失，但是Locust的代码结构清晰，核心代码量也只有几百行，可扩展性也非常不错。换言之，Locust的可玩性（hackable）极强，对于一个想深入挖掘性能测试工具原理的人来说，Locust非常适合。</p>
 <p>好了，Locust的介绍暂且到这儿，后续我会再对Locust的使用方法和二次开发进行详细介绍，也算是弥补官方文档的不足吧。</p>
+<p>转自：<a href="https://debugtalk.com/post/locustplus-talk-about-performance-test" target="_blank" rel="noopener">https://debugtalk.com/post/locustplus-talk-about-performance-test</a></p>
 
       
     </div>
