@@ -66,13 +66,13 @@
 
 <h2 id="一-安装前准备"><a href="#一-安装前准备" class="headerlink" title="一. 安装前准备"></a>一. 安装前准备</h2><h3 id="创建新的-OAuth2-应用程序"><a href="#创建新的-OAuth2-应用程序" class="headerlink" title="创建新的 OAuth2 应用程序"></a>创建新的 OAuth2 应用程序</h3><p>创建一个Gitea的 OAuth2 应用程序，“客户端ID”和“客户端密钥”用于授权访问Gitea的资源。</p>
 <p>重定向 URI配置必须按照下面示例的格式和路径，并且必须是真实存在的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户端ID</span><br><span class="line">74f464f5-5387-413f-a0a6-5ed12b6683f2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户端ID</span><br><span class="line">434eec5a-3e7d-4ab4-9d2f-0374de99d87c</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户端密钥</span><br><span class="line">Um5zcxfoKFYB_gGtV8nZCJD0FQU2pL4L-UPfuM25EpU=</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户端密钥</span><br><span class="line">1-MEs8whyiJ78TSo35WISPVNS69XKVm2Nb5Kh7asYB0=</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">应用名称</span><br><span class="line">Drone</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">重定向URI </span><br><span class="line">https://drone.company/login</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">重定向URI</span><br><span class="line">http://192.168.126.201:9000/login</span><br></pre></td></tr></table></figure>
 
 <h3 id="创建新的共享密钥"><a href="#创建新的共享密钥" class="headerlink" title="创建新的共享密钥"></a>创建新的共享密钥</h3><p>创建一个新的共享密钥，用于授权Runners和Drone Server之间进行通信。</p>
 <p>你可以使用openssl命令生成一个共享密钥：</p>
